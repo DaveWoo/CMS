@@ -1,7 +1,0 @@
-D:\GitHub\CMS\yy\yycms.union\bin\Debug\yycms.union.dll
-D:\GitHub\CMS\yy\yycms.union\bin\Debug\yycms.union.pdb
-D:\GitHub\CMS\yy\yycms.union\bin\Debug\Newtonsoft.Json.dll
-D:\GitHub\CMS\yy\yycms.union\bin\Debug\Newtonsoft.Json.xml
-D:\GitHub\CMS\yy\yycms.union\obj\Debug\yycms.union.csprojResolveAssemblyReference.cache
-D:\GitHub\CMS\yy\yycms.union\obj\Debug\yycms.union.dll
-D:\GitHub\CMS\yy\yycms.union\obj\Debug\yycms.union.pdb

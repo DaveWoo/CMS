@@ -1,4 +1,4 @@
-### 玥雅CMS v3.0全新发布！
+### CMS v3.0全新发布！
 ### 拥抱CMS时代的变革，与社区有兴趣的朋友们一起完善！
 - 1，采用ASP.NET WebAPI 2、ASP.Net MVC 5、ASP.Net SingalR、MSMQ、Quartz、Angularjs框架。
 - 2，内置微信群发消息、同步粉丝、发红包、卡券等功能，直接能用。
@@ -11,7 +11,7 @@
 - 4，yycms.union   第三方平台SDK集合
 
 ### 数据库：
-[数据库创建脚本](http://pan.baidu.com/s/1sjGagLR)
+[数据库创建脚本](
 
 ### 使用说明：
 - 1，同步项目到本地，并生成。
