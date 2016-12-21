@@ -11,13 +11,13 @@
         else
         {
             <a href="/Help/ResourceModel?modelName=@modelDescription.Name" style="margin-left:2px;"><i class="icon_link"></i></a>
-        }
+}
     }
     else if (modelDescription is CollectionModelDescription)
     {
         var collectionDescription = modelDescription as CollectionModelDescription;
-    var elementDescription = collectionDescription.ElementDescription;
-        @:Êý¾Ý¼¯ @Html.DisplayFor(m => elementDescription.ModelType, "ModelDescriptionLink", new { modelDescription = elementDescription })
+        var elementDescription = collectionDescription.ElementDescription;
+        @:TODO @Html.DisplayFor(m => elementDescription.ModelType, "ModelDescriptionLink", new { modelDescription = elementDescription })
     }
     else
     {

@@ -11,12 +11,12 @@
     }
 
     .panel-title {
-        font-family: 微软雅黑;
+        /*font-family: 微软雅黑;*/
     }
 
     .table > thead:first-child > tr:first-child > th {
         font-weight: normal;
-        font-family: 微软雅黑;
+        /*font-family: 微软雅黑;*/
     }
 
     .table > thead > tr > th {
@@ -38,7 +38,7 @@
         <div class="panel-heading" role="tab" id="ParametersHD">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#ParametersHD" href="#ParametersBD" aria-expanded="false" aria-controls="ParametersBD">
-                    URI参数
+                    UriParameters
                 </a>
             </h4>
         </div>
@@ -55,7 +55,7 @@
         <div class="panel-heading" role="tab" id="BizParametersHD">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#BizParametersHD" href="#BizParametersBD" aria-expanded="false" aria-controls="BizParametersBD">
-                    业务参数 
+                    ModelType
                 </a>
                 <span style="float:right;">@Html.DisplayFor(m => m.RequestModelDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.RequestModelDescription })</span>
             </h4>
@@ -75,7 +75,7 @@
                 }
                 else
                 {
-                    <p>无。</p>
+                    <p>BizParametersBD</p>
                 }
             </div>
         </div>
@@ -87,7 +87,7 @@
         <div class="panel-heading" role="tab" id="SamplesHD">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#SamplesHD" href="#SamplesBD" aria-expanded="false" aria-controls="SamplesBD">
-                    请求示例
+                    Sample Requests
                 </a>
             </h4>
         </div>
@@ -107,7 +107,7 @@
         <div class="panel-heading" role="tab" id="ModelDescriptionLinkHD">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#ModelDescriptionLinkHD" href="#ModelDescriptionLinkBD" aria-expanded="false" aria-controls="ModelDescriptionLinkBD">
-                    响应实体
+                    Resource Description
                 </a>
                 <span style="float:right;">
                     @if (Model.ResourceDescription != null)
@@ -135,7 +135,7 @@
                 }
                 else
                 {
-                    <p>无。</p>
+                    <p>Model Description Link</p>
                 }
             </div>
         </div>
@@ -147,7 +147,7 @@
         <div class="panel-heading" role="tab" id="Samples2HD">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#Samples2HD" href="#Samples2BD" aria-expanded="false" aria-controls="Samples2BD">
-                    返回示例
+                    Sample Responses
                 </a>
             </h4>
         </div>

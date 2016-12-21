@@ -18,6 +18,10 @@
 - 2，下载数据库脚本，创建数据库。
 - 3，修改数据库连接地址：【yycms.admin】webconfig文件，【yycms.service】app.config文件。
 
+http://localhost:9130/help/index
+http://localhost:9130/help/api/POST-api-News-Get
+http://localhost:9130/Help/ResourceModel?modelName=NewsListItem
+
 ![输入图片说明](http://git.oschina.net/uploads/images/2015/1008/222146_9fa56e7c_490310.jpeg "在这里输入图片标题")
 
 ![输入图片说明](http://git.oschina.net/uploads/images/2015/1008/222218_152b5016_490310.jpeg "在这里输入图片标题")
