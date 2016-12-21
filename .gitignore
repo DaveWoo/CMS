@@ -195,3 +195,4 @@
 /yy/packages/*
 /yy/yycms.admin/bin/System.Core.dll
 *.suo
+/yy/.vs/config/applicationhost.config
