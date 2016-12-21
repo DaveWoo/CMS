@@ -1,50 +1,44 @@
-﻿using Newtonsoft.Json;
+﻿using System;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace yycms.union.wechat
 {
-    public class Menu : SDK
-    {
-        public Menu(String _Accecc_Token)
-        {
-            base.Access_Token = _Accecc_Token;
-        }
-        /// <summary>
-        /// 添加菜单
-        /// </summary>
-        /// <param name="ReqStr"></param>
-        /// <returns></returns>
-        public Boolean Add(String ReqStr)
-        {
-            var res = Request(menu_add, ReqStr);
+	public class Menu : SDK
+	{
+		public Menu(String _Accecc_Token)
+		{
+			base.Access_Token = _Accecc_Token;
+		}
 
-            if (res != null && res.HasValues && res["errcode"].Value<int>() == 0)
-            {
-                return true;
-            }
-            return false;
-        }
+		/// <summary>
+		/// 添加菜单
+		/// </summary>
+		/// <param name="ReqStr"></param>
+		/// <returns></returns>
+		public Boolean Add(String ReqStr)
+		{
+			var res = Request(menu_add, ReqStr);
 
-        /// <summary>
-        /// 同步菜单
-        /// </summary>
-        /// <param name="PageIndex"></param>
-        /// <returns></returns>
-        public JObject Get() 
-        {
-            var res = Request(menu_Get, "");
-            if (res != null)
-            {
-                return res;
-            }
-            return null;
-        }
+			if (res != null && res.HasValues && res["errcode"].Value<int>() == 0)
+			{
+				return true;
+			}
+			return false;
+		}
 
-
-    }
+		/// <summary>
+		/// 同步菜单
+		/// </summary>
+		/// <param name="PageIndex"></param>
+		/// <returns></returns>
+		public JObject Get()
+		{
+			var res = Request(menu_Get, "");
+			if (res != null)
+			{
+				return res;
+			}
+			return null;
+		}
+	}
 }

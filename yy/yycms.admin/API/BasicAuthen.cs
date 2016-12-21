@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -8,6 +7,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Filters;
+using Newtonsoft.Json;
 using yycms.admin.Models;
 using yycms.entity;
 
@@ -16,24 +16,32 @@ namespace yycms.admin.API
 	public class BasicAuthenAttribute : ActionFilterAttribute
 	{
 		#region 数据库
+
 		private DBConnection _DB;
+
 		protected DBConnection DB
 		{
 			get { if (_DB == null) { _DB = new DBConnection(); } return _DB; }
 		}
-		#endregion
+
+		#endregion 数据库
 
 		#region 当前用户
+
 		private yy_User _User;
+
 		protected yy_User User
 		{
 			get { return _User; }
 			set { _User = value; }
 		}
-		#endregion
+
+		#endregion 当前用户
 
 		#region 当前用户的权限集合
-		List<yy_Permission> _Permission;
+
+		private List<yy_Permission> _Permission;
+
 		protected List<yy_Permission> Permission
 		{
 			get
@@ -61,18 +69,21 @@ namespace yycms.admin.API
 				return _Permission;
 			}
 		}
-		#endregion
+
+		#endregion 当前用户的权限集合
 
 		public override void OnActionExecuting(System.Web.Http.Controllers.HttpActionContext actionContext)
 		{
 			#region 如果无需权限验证直接跳过
+
 			if (actionContext.ActionDescriptor.GetCustomAttributes<AllowAnonymousAttribute>().Count > 0)
 			{
 				base.OnActionExecuting(actionContext);
 
 				return;
 			}
-			#endregion
+
+			#endregion 如果无需权限验证直接跳过
 
 			String UserStr = String.Empty;
 

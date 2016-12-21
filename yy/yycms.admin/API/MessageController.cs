@@ -9,167 +9,201 @@ using yycms.entity;
 
 namespace yycms.admin.API
 {
-    /// <summary>
-    /// 消息
-    /// </summary>
-    [BasicAuthen]
-    public class MessageController : BasicAPI
-    {
-        #region  消息列表
-        /// <summary>
-        /// 获取消息列表
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<ResponseData<yy_Message>> Get(RequestEntity value)
-        {
-            //查询的表名称
-            Type Table = typeof(yy_Message);
+	/// <summary>
+	/// 消息
+	/// </summary>
+	[BasicAuthen]
+	public class MessageController : BasicAPI
+	{
+		#region 消息列表
 
-            var FormData = await Request.Content.ReadAsAsync<Dictionary<String, String>>();
+		/// <summary>
+		/// 获取消息列表
+		/// </summary>
+		/// <returns></returns>
+		[HttpPost]
+		public async Task<ResponseData<yy_Message>> Get(RequestEntity value)
+		{
+			//查询的表名称
+			Type Table = typeof(yy_Message);
 
-            #region where condition
+			var FormData = await Request.Content.ReadAsAsync<Dictionary<String, String>>();
 
-            //筛选条件
-            var Where = String.Empty;
+			#region where condition
 
-            var WhereBuild = new List<string>();
+			//筛选条件
+			var Where = String.Empty;
 
-            #region 消息标题
-            if (!String.IsNullOrEmpty(value.Title))
-            {
-                WhereBuild.Add("Title like '%" + value.Title + "%'");
-            }
-            #endregion
+			var WhereBuild = new List<string>();
 
-            #region 消息分类
-            if (value.TypeID > 0)
-            {
-                WhereBuild.Add("TypeIDs like '%," + value.TypeID + ",%'");
-            }
-            #endregion
+			#region 消息标题
 
-            #region 根据时间过滤
-            #region 大于等于 开始时间 && 小于等于 结束时间
-            if (!String.IsNullOrEmpty(value.StartTime) && !String.IsNullOrEmpty(value.EndTime))
-            {
-                DateTime st, et;
+			if (!String.IsNullOrEmpty(value.Title))
+			{
+				WhereBuild.Add("Title like '%" + value.Title + "%'");
+			}
 
-                if (DateTime.TryParse(value.StartTime, out st) && DateTime.TryParse(value.EndTime, out et))
-                {
-                    WhereBuild.Add(" CreateDate >= '" + st.ToString("yyyy-MM-dd") + " 00:00:00' AND CreateDate <= '" + et.ToString("yyyy-MM-dd") + " 23:59:59'");
-                }
-            }
-            #endregion
-            #region 大于等于开始时间
-            else if (!String.IsNullOrEmpty(value.StartTime))
-            {
-                DateTime st;
-                if (DateTime.TryParse(value.StartTime, out st))
-                {
-                    WhereBuild.Add(" CreateDate >= '" + st.ToString("yyyy-MM-dd") + " 00:00:00'");
-                }
-            }
-            #endregion
-            #region 小于等于结束时间
-            else if (!String.IsNullOrEmpty(value.EndTime))
-            {
-                DateTime et;
-                if (DateTime.TryParse(value.EndTime, out et))
-                {
-                    WhereBuild.Add(" CreateDate <= '" + et.ToString("yyyy-MM-dd") + " 23:59:59'");
-                }
-            }
-            #endregion
-            #endregion
+			#endregion 消息标题
 
-            if (WhereBuild.Count > 0)
-            {
-                Where = " WHERE " + String.Join(" AND ", WhereBuild);
-            }
-            #endregion
+			#region 消息分类
 
-            #region OrderBy
-            //排序规则
-            String OrderBy = " ID DESC ";
-            if (!String.IsNullOrEmpty(value.OrderBy))
-            {
-                OrderBy = " " + value.OrderBy + " " + (value.IsDesc ? "DESC" : "ASC");
-            }
-            #endregion
+			if (value.TypeID > 0)
+			{
+				WhereBuild.Add("TypeIDs like '%," + value.TypeID + ",%'");
+			}
 
-            #region 拼接sql语句
-            String colsStr = " ID,UserID,Platform,Status,Title,Mail,Mobile,'' as Message,CreateDate ";
-            #region  查询数据
-            String QuertCMD = String.Format(@"SELECT TOP {0} * FROM (
-                                SELECT ROW_NUMBER() OVER (ORDER BY {4}) AS RowNumber," + colsStr + @" FROM {2} WITH(NOLOCK) {3} 
+			#endregion 消息分类
+
+			#region 根据时间过滤
+
+			#region 大于等于 开始时间 && 小于等于 结束时间
+
+			if (!String.IsNullOrEmpty(value.StartTime) && !String.IsNullOrEmpty(value.EndTime))
+			{
+				DateTime st, et;
+
+				if (DateTime.TryParse(value.StartTime, out st) && DateTime.TryParse(value.EndTime, out et))
+				{
+					WhereBuild.Add(" CreateDate >= '" + st.ToString("yyyy-MM-dd") + " 00:00:00' AND CreateDate <= '" + et.ToString("yyyy-MM-dd") + " 23:59:59'");
+				}
+			}
+
+			#endregion 大于等于 开始时间 && 小于等于 结束时间
+
+			#region 大于等于开始时间
+
+			else if (!String.IsNullOrEmpty(value.StartTime))
+			{
+				DateTime st;
+				if (DateTime.TryParse(value.StartTime, out st))
+				{
+					WhereBuild.Add(" CreateDate >= '" + st.ToString("yyyy-MM-dd") + " 00:00:00'");
+				}
+			}
+
+			#endregion 大于等于开始时间
+
+			#region 小于等于结束时间
+
+			else if (!String.IsNullOrEmpty(value.EndTime))
+			{
+				DateTime et;
+				if (DateTime.TryParse(value.EndTime, out et))
+				{
+					WhereBuild.Add(" CreateDate <= '" + et.ToString("yyyy-MM-dd") + " 23:59:59'");
+				}
+			}
+
+			#endregion 小于等于结束时间
+
+			#endregion 根据时间过滤
+
+			if (WhereBuild.Count > 0)
+			{
+				Where = " WHERE " + String.Join(" AND ", WhereBuild);
+			}
+
+			#endregion where condition
+
+			#region OrderBy
+
+			//排序规则
+			String OrderBy = " ID DESC ";
+			if (!String.IsNullOrEmpty(value.OrderBy))
+			{
+				OrderBy = " " + value.OrderBy + " " + (value.IsDesc ? "DESC" : "ASC");
+			}
+
+			#endregion OrderBy
+
+			#region 拼接sql语句
+
+			String colsStr = " ID,UserID,Platform,Status,Title,Mail,Mobile,'' as Message,CreateDate ";
+
+			#region 查询数据
+
+			String QuertCMD = String.Format(@"SELECT TOP {0} * FROM (
+                                SELECT ROW_NUMBER() OVER (ORDER BY {4}) AS RowNumber," + colsStr + @" FROM {2} WITH(NOLOCK) {3}
                                 ) A WHERE RowNumber > {0} * ({1}-1)", value.PageSize, value.PageIndex + 1, "[" + Table.Name + "]", Where, OrderBy);
-            #endregion
-            #region 查询总数
-            String DataCountCMD = @"SELECT COUNT(1) FROM [" + Table.Name + "] WITH(NOLOCK) " + Where;
-            #endregion
-            #endregion
 
-            #region 执行查询并返回数据
-            var DataCount = DB.Database.SqlQuery<int>(DataCountCMD).FirstOrDefault();
-            return new ResponseData<yy_Message>(value.PageSize,
-                value.PageIndex,
-                DataCount,
-                (DataCount % value.PageSize == 0 ? DataCount / value.PageSize : DataCount / value.PageSize + 1),
-                DB.Database.SqlQuery<yy_Message>(QuertCMD).ToList());
-            #endregion
-        }
-        #endregion
+			#endregion 查询数据
 
-        #region 消息详情
-        /// <summary>
-        /// 获取消息详情
-        /// </summary>
-        /// <param name="id">消息ID。</param>
-        /// <returns></returns>
-        [HttpGet]
+			#region 查询总数
 
-        public yy_Message Get(int id)
-        {
-            DB.Database.ExecuteSqlCommand("UPDATE yy_Message SET Status = 1 WHERE ID = " + id);
+			String DataCountCMD = @"SELECT COUNT(1) FROM [" + Table.Name + "] WITH(NOLOCK) " + Where;
 
-            //消息详情
-            return DB.yy_Message.Find(id);
-        }
-        #endregion
+			#endregion 查询总数
 
-        #region 添加消息
-        /// <summary>
-        /// 添加消息
-        /// </summary>
-        /// <param name="value">消息实体。</param>
-        [HttpPost]
-        public ResponseItem Post(yy_Message value)
-        {
-            try
-            {
-                DB.yy_Message.Add(value);
-                DB.SaveChanges();
-                return new ResponseItem(0, "添加消息成功。");
-            }
-            catch (Exception ex)
-            {
-                return new ResponseItem(2, ex.Message);
-            }
-        }
-        #endregion
+			#endregion 拼接sql语句
 
-        #region 删除消息
-        /// <summary>
-        /// 删除
-        /// </summary>
-        /// <param name="id">消息ID。</param>
-        [HttpDelete]
-        public ResponseItem Delete(int id)
-        {
-            DB.Database.ExecuteSqlCommand("DELETE yy_Message WHERE ID = " + id);
-            return new ResponseItem(0, "");
-        }
-        #endregion
-    }
+			#region 执行查询并返回数据
+
+			var DataCount = DB.Database.SqlQuery<int>(DataCountCMD).FirstOrDefault();
+			return new ResponseData<yy_Message>(value.PageSize,
+				value.PageIndex,
+				DataCount,
+				(DataCount % value.PageSize == 0 ? DataCount / value.PageSize : DataCount / value.PageSize + 1),
+				DB.Database.SqlQuery<yy_Message>(QuertCMD).ToList());
+
+			#endregion 执行查询并返回数据
+		}
+
+		#endregion 消息列表
+
+		#region 消息详情
+
+		/// <summary>
+		/// 获取消息详情
+		/// </summary>
+		/// <param name="id">消息ID。</param>
+		/// <returns></returns>
+		[HttpGet]
+		public yy_Message Get(int id)
+		{
+			DB.Database.ExecuteSqlCommand("UPDATE yy_Message SET Status = 1 WHERE ID = " + id);
+
+			//消息详情
+			return DB.yy_Message.Find(id);
+		}
+
+		#endregion 消息详情
+
+		#region 添加消息
+
+		/// <summary>
+		/// 添加消息
+		/// </summary>
+		/// <param name="value">消息实体。</param>
+		[HttpPost]
+		public ResponseItem Post(yy_Message value)
+		{
+			try
+			{
+				DB.yy_Message.Add(value);
+				DB.SaveChanges();
+				return new ResponseItem(0, "添加消息成功。");
+			}
+			catch (Exception ex)
+			{
+				return new ResponseItem(2, ex.Message);
+			}
+		}
+
+		#endregion 添加消息
+
+		#region 删除消息
+
+		/// <summary>
+		/// 删除
+		/// </summary>
+		/// <param name="id">消息ID。</param>
+		[HttpDelete]
+		public ResponseItem Delete(int id)
+		{
+			DB.Database.ExecuteSqlCommand("DELETE yy_Message WHERE ID = " + id);
+			return new ResponseItem(0, "");
+		}
+
+		#endregion 删除消息
+	}
 }

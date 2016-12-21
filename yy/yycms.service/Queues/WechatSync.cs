@@ -1,193 +1,206 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using yycms.union.wechat;
-using yycms.entity;
-using System.Net;
-using Newtonsoft.Json;
-using System.IO;
-using System.Threading;
 using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using yycms.entity;
+using yycms.union.wechat;
 
 namespace yycms.service.Queues
 {
-    /// <summary>
-    /// 微信同步素材
-    /// </summary>
-    public class WechatSync : IQueue
-    {
-        public bool Enable
-        {
-            get
-            {
-                return true;
-            }
-        }
-        public string Path
-        {
-            get
-            {
-                return this.GetType().Name;
-            }
-        }
+	/// <summary>
+	/// 微信同步素材
+	/// </summary>
+	public class WechatSync : IQueue
+	{
+		public bool Enable
+		{
+			get
+			{
+				return true;
+			}
+		}
 
-        #region 数据库操作对象
-        DBConnection DB = new DBConnection();
-        #endregion
+		public string Path
+		{
+			get
+			{
+				return this.GetType().Name;
+			}
+		}
 
-        public void ReceiveCompleted(String body)
-        {
-            if (String.IsNullOrEmpty(body)) { return; }
+		#region 数据库操作对象
 
-            var NewsID = long.Parse(body);
+		private DBConnection DB = new DBConnection();
 
-            var news = DB.yy_News.Find(NewsID);
+		#endregion 数据库操作对象
 
-            if (news == null) { return; }
+		public void ReceiveCompleted(String body)
+		{
+			if (String.IsNullOrEmpty(body))
+			{ return; }
 
-            var plt = DB.yy_Platforms.Where(x => x.UserID == news.UserID && x.Code == 11).FirstOrDefault();
+			var NewsID = long.Parse(body);
 
-            if (plt == null) { return; }
+			var news = DB.yy_News.Find(NewsID);
 
-            freshToken(plt);
+			if (news == null)
+			{ return; }
 
-            var m = new Material(plt.Access_token);
+			var plt = DB.yy_Platforms.Where(x => x.UserID == news.UserID && x.Code == 11).FirstOrDefault();
 
-            #region 新闻内容里的图片上传到微信服务器并替换地址
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(news.Info);
-            var imgs = doc.DocumentNode.SelectNodes("//img");
-            if (imgs != null)
-            {
-                var temp = ConfigurationManager.AppSettings["AdminImagesPath"];
-                if (!Directory.Exists(temp)) { Directory.CreateDirectory(temp); }
-                for (var i = 0; i < imgs.Count; i++)
-                {
-                    try
-                    {
-                        if (imgs[i].HasAttributes && imgs[i].Attributes["src"] != null)
-                        {
-                            var src = imgs[i].Attributes["src"].Value;
+			if (plt == null)
+			{ return; }
 
-                            if (src.IndexOf("http://") >= 0)
-                            {
-                                var savePath = temp + System.IO.Path.GetFileName(src).Replace("!middle", "");
+			freshToken(plt);
 
-                                using (var wc = new WebClient())
-                                {
-                                    if (!File.Exists(savePath))
-                                    {
-                                        wc.DownloadFile(src, savePath);
-                                    }
-                                }
+			var m = new Material(plt.Access_token);
 
-                                src = savePath;
-                            }
-                            else
-                            {
-                                src = temp + src;
-                            }
+			#region 新闻内容里的图片上传到微信服务器并替换地址
 
-                            var wechat_pic_url = m.Image_Upload(src);
+			var doc = new HtmlAgilityPack.HtmlDocument();
+			doc.LoadHtml(news.Info);
+			var imgs = doc.DocumentNode.SelectNodes("//img");
+			if (imgs != null)
+			{
+				var temp = ConfigurationManager.AppSettings["AdminImagesPath"];
+				if (!Directory.Exists(temp))
+				{ Directory.CreateDirectory(temp); }
+				for (var i = 0; i < imgs.Count; i++)
+				{
+					try
+					{
+						if (imgs[i].HasAttributes && imgs[i].Attributes["src"] != null)
+						{
+							var src = imgs[i].Attributes["src"].Value;
 
-                            imgs[i].Attributes["src"].Value = wechat_pic_url;
-                        }
-                    }
-                    catch
-                    {
+							if (src.IndexOf("http://") >= 0)
+							{
+								var savePath = temp + System.IO.Path.GetFileName(src).Replace("!middle", "");
 
-                    }
-                    Thread.Sleep(1);
-                }
-            }
-            #endregion
+								using (var wc = new WebClient())
+								{
+									if (!File.Exists(savePath))
+									{
+										wc.DownloadFile(src, savePath);
+									}
+								}
 
-            var ImagePath = ConfigurationManager.AppSettings["AdminImagesPath"] + news.DefaultImg;
+								src = savePath;
+							}
+							else
+							{
+								src = temp + src;
+							}
 
-            if (news.DefaultImg.Contains("!middle"))
-            {
-                news.DefaultImg = news.DefaultImg.Replace("!middle", "");
+							var wechat_pic_url = m.Image_Upload(src);
 
-                File.Move(ImagePath, ImagePath.Replace("!middle", ""));
+							imgs[i].Attributes["src"].Value = wechat_pic_url;
+						}
+					}
+					catch
+					{
+					}
+					Thread.Sleep(1);
+				}
+			}
 
-                ImagePath = ImagePath.Replace("!middle", "");
+			#endregion 新闻内容里的图片上传到微信服务器并替换地址
 
-                DB.SaveChanges();
-            }
+			var ImagePath = ConfigurationManager.AppSettings["AdminImagesPath"] + news.DefaultImg;
 
-            var mediaItem = m.Add(news.Title, "", news.Summary, 0, doc.DocumentNode.OuterHtml, "", ImagePath);
+			if (news.DefaultImg.Contains("!middle"))
+			{
+				news.DefaultImg = news.DefaultImg.Replace("!middle", "");
 
-            if (mediaItem["media_id"] != null)
-            {
-                news.WechatMediaID = mediaItem["media_id"].Value<String>();
+				File.Move(ImagePath, ImagePath.Replace("!middle", ""));
 
-                var detailItem = m.Detail(news.WechatMediaID);
+				ImagePath = ImagePath.Replace("!middle", "");
 
-                if (detailItem != null && 
-                    detailItem["news_item"] != null && 
-                    detailItem["news_item"][0]!=null)
-                {
-                    news.WechatNewsUrl = detailItem["news_item"][0]["url"].Value<String>();
-                }
+				DB.SaveChanges();
+			}
 
-                DB.SaveChanges();
-            }
-        }
+			var mediaItem = m.Add(news.Title, "", news.Summary, 0, doc.DocumentNode.OuterHtml, "", ImagePath);
 
-        /// <summary>
-        /// 刷新会话令牌
-        /// </summary>
-        /// <param name="_Mechant"></param>
-        public void freshToken(yy_Platforms _Mechant)
-        {
-            #region 如果商家Access_token过期就刷新，调用接口需要用这个
-            if (String.IsNullOrEmpty(_Mechant.Access_token) || _Mechant.Access_token_Expires_in < DateTime.Now)
-            {
-                var _res = new WebClient().DownloadString(
-                    String.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}",
-                    _Mechant.APPKey, _Mechant.APPSecret));
+			if (mediaItem["media_id"] != null)
+			{
+				news.WechatMediaID = mediaItem["media_id"].Value<String>();
 
-                var _resObj = JsonConvert.DeserializeObject<JObject>(_res);
+				var detailItem = m.Detail(news.WechatMediaID);
 
-                if (_resObj["access_token"] != null)
-                {
-                    _Mechant.Access_token = _resObj["access_token"].Value<String>();
-                    _Mechant.Access_token_Expires_in = DateTime.Now.AddSeconds(_resObj["expires_in"].Value<int>());
-                    DB.SaveChanges();
-                }
-            }
-            #endregion
-            #region 如果商家jsapi_ticket过期就刷新，网页里用jsAPi需要用这个
-            if (String.IsNullOrEmpty(_Mechant.jsapi_ticket) || _Mechant.jsapi_ticket_Expires_in < DateTime.Now)
-            {
-                var _res = new WebClient().DownloadString(String.Format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
-                    _Mechant.Access_token));
-                var _resObj = JsonConvert.DeserializeObject<JObject>(_res);
-                if (_resObj["ticket"] != null)
-                {
-                    _Mechant.jsapi_ticket = _resObj["ticket"].Value<String>();
-                    _Mechant.jsapi_ticket_Expires_in = DateTime.Now.AddSeconds(_resObj["expires_in"].Value<int>());
-                    DB.SaveChanges();
-                }
-            }
-            #endregion
-            #region 如果商家api_ticket过期就刷新,网页里用js发券，做签名时需要用到这个
-            if (String.IsNullOrEmpty(_Mechant.api_ticket) || _Mechant.api_ticket_Expires_in < DateTime.Now)
-            {
-                var _res = new WebClient().DownloadString(String.Format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=wx_card",
-                    _Mechant.Access_token));
-                var _resObj = JsonConvert.DeserializeObject<JObject>(_res);
-                if (_resObj["ticket"] != null)
-                {
-                    _Mechant.api_ticket = _resObj["ticket"].Value<String>();
-                    _Mechant.api_ticket_Expires_in = DateTime.Now.AddSeconds(_resObj["expires_in"].Value<int>());
-                    DB.SaveChanges();
-                }
-            }
-            #endregion
-        }
-    }
+				if (detailItem != null &&
+					detailItem["news_item"] != null &&
+					detailItem["news_item"][0] != null)
+				{
+					news.WechatNewsUrl = detailItem["news_item"][0]["url"].Value<String>();
+				}
+
+				DB.SaveChanges();
+			}
+		}
+
+		/// <summary>
+		/// 刷新会话令牌
+		/// </summary>
+		/// <param name="_Mechant"></param>
+		public void freshToken(yy_Platforms _Mechant)
+		{
+			#region 如果商家Access_token过期就刷新，调用接口需要用这个
+
+			if (String.IsNullOrEmpty(_Mechant.Access_token) || _Mechant.Access_token_Expires_in < DateTime.Now)
+			{
+				var _res = new WebClient().DownloadString(
+					String.Format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}",
+					_Mechant.APPKey, _Mechant.APPSecret));
+
+				var _resObj = JsonConvert.DeserializeObject<JObject>(_res);
+
+				if (_resObj["access_token"] != null)
+				{
+					_Mechant.Access_token = _resObj["access_token"].Value<String>();
+					_Mechant.Access_token_Expires_in = DateTime.Now.AddSeconds(_resObj["expires_in"].Value<int>());
+					DB.SaveChanges();
+				}
+			}
+
+			#endregion 如果商家Access_token过期就刷新，调用接口需要用这个
+
+			#region 如果商家jsapi_ticket过期就刷新，网页里用jsAPi需要用这个
+
+			if (String.IsNullOrEmpty(_Mechant.jsapi_ticket) || _Mechant.jsapi_ticket_Expires_in < DateTime.Now)
+			{
+				var _res = new WebClient().DownloadString(String.Format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
+					_Mechant.Access_token));
+				var _resObj = JsonConvert.DeserializeObject<JObject>(_res);
+				if (_resObj["ticket"] != null)
+				{
+					_Mechant.jsapi_ticket = _resObj["ticket"].Value<String>();
+					_Mechant.jsapi_ticket_Expires_in = DateTime.Now.AddSeconds(_resObj["expires_in"].Value<int>());
+					DB.SaveChanges();
+				}
+			}
+
+			#endregion 如果商家jsapi_ticket过期就刷新，网页里用jsAPi需要用这个
+
+			#region 如果商家api_ticket过期就刷新,网页里用js发券，做签名时需要用到这个
+
+			if (String.IsNullOrEmpty(_Mechant.api_ticket) || _Mechant.api_ticket_Expires_in < DateTime.Now)
+			{
+				var _res = new WebClient().DownloadString(String.Format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=wx_card",
+					_Mechant.Access_token));
+				var _resObj = JsonConvert.DeserializeObject<JObject>(_res);
+				if (_resObj["ticket"] != null)
+				{
+					_Mechant.api_ticket = _resObj["ticket"].Value<String>();
+					_Mechant.api_ticket_Expires_in = DateTime.Now.AddSeconds(_resObj["expires_in"].Value<int>());
+					DB.SaveChanges();
+				}
+			}
+
+			#endregion 如果商家api_ticket过期就刷新,网页里用js发券，做签名时需要用到这个
+		}
+	}
 }

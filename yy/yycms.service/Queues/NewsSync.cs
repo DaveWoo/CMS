@@ -1,183 +1,190 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using yycms.entity;
-using yycms.service.PlugIn;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
+using yycms.entity;
+using yycms.service.PlugIn;
 
 namespace yycms.service.Queues
 {
-    public class NewsSync : IQueue
-    {
-        public bool Enable
-        {
-            get
-            {
-                return true;
-            }
-        }
+	public class NewsSync : IQueue
+	{
+		public bool Enable
+		{
+			get
+			{
+				return true;
+			}
+		}
 
-        public string Path
-        {
-            get
-            {
-                return this.GetType().Name;
-            }
-        }
+		public string Path
+		{
+			get
+			{
+				return this.GetType().Name;
+			}
+		}
 
-        #region 数据库操作对象
-        DBConnection DB = new DBConnection();
-        #endregion
+		#region 数据库操作对象
 
-        public void ReceiveCompleted(String body)
-        {
-            var news = new List<yy_Spider_News>();
+		private DBConnection DB = new DBConnection();
 
-            if (String.IsNullOrEmpty(body))
-            {
-                var spiders = DB.yy_Spider.Where(x => x.SpiderMode == 1).Select(x => x.ID).ToList();
+		#endregion 数据库操作对象
 
-                if (spiders.Count < 1) { return; }
+		public void ReceiveCompleted(String body)
+		{
+			var news = new List<yy_Spider_News>();
 
-                foreach (var v in spiders)
-                {
-                    var _news = DB.yy_Spider_News.Where(x => x.SpiderID == v && x.IsSync == 0).ToList();
+			if (String.IsNullOrEmpty(body))
+			{
+				var spiders = DB.yy_Spider.Where(x => x.SpiderMode == 1).Select(x => x.ID).ToList();
 
-                    if (_news.Count > 0)
-                    {
-                        news.AddRange(_news);
-                    }
-                }
-            }
+				if (spiders.Count < 1)
+				{ return; }
 
-            else
-            {
-                var IDs = body.Split(new String[1] { "," }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (var v in spiders)
+				{
+					var _news = DB.yy_Spider_News.Where(x => x.SpiderID == v && x.IsSync == 0).ToList();
 
-                long ID = 0;
+					if (_news.Count > 0)
+					{
+						news.AddRange(_news);
+					}
+				}
+			}
+			else
+			{
+				var IDs = body.Split(new String[1] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-                foreach(var v in IDs)
-                {
-                    if(!long.TryParse(v,out ID)) { ID = 0; }
+				long ID = 0;
 
-                    if (ID < 1) { continue; }
+				foreach (var v in IDs)
+				{
+					if (!long.TryParse(v, out ID))
+					{ ID = 0; }
 
-                    var item = DB.yy_Spider_News.Find(v);
+					if (ID < 1)
+					{ continue; }
 
-                    if(item!=null)
-                    {
-                        news.Add(item);
-                    }
-                }
-            }
+					var item = DB.yy_Spider_News.Find(v);
 
-            if (news.Count < 1) { return; }
+					if (item != null)
+					{
+						news.Add(item);
+					}
+				}
+			}
 
-            var crtDic = "/Images/" + DateTime.Now.Ticks.ToString() + "/";
+			if (news.Count < 1)
+			{ return; }
 
-            var temp = ConfigurationManager.AppSettings["AdminImagesPath"] + crtDic;
+			var crtDic = "/Images/" + DateTime.Now.Ticks.ToString() + "/";
 
-            if (!Directory.Exists(temp)) { Directory.CreateDirectory(temp); }
+			var temp = ConfigurationManager.AppSettings["AdminImagesPath"] + crtDic;
 
-            foreach (var v in news)
-            {
-                #region 新闻实体
-                var spiderItem = DB.yy_Spider.Where(x => x.ID == v.SpiderID).FirstOrDefault();
-                var newsItem = new yy_News()
-                {
-                    Title = v.Title,
-                    DefaultImg = v.DefaultImage,
-                    KeyWords = v.KeyWords,
-                    Summary = v.Summary,
-                    Info = v.Info,
-                    TypeIDs = spiderItem.TypeIDs,
-                    UserID = spiderItem.UserID,
-                    TargetPlatforms = spiderItem.TargetPlatforms,
-                    CreateDate = DateTime.Now,
-                    IsShow = 1,
-                    CanReply = 1,
-                    ImgList = "",
-                    LookCount = 0,
-                    Recommend = 0,
-                    ShowIndex = 0,
-                    WechatMediaID = "",
-                    WechatNewsUrl = ""
-                };
-                #endregion
+			if (!Directory.Exists(temp))
+			{ Directory.CreateDirectory(temp); }
 
-                #region 替换默认图片
-                if (String.IsNullOrEmpty(newsItem.DefaultImg))
-                {
-                    newsItem.DefaultImg = "/Images/users.jpg";
-                }
-                else
-                {
-                    var dftName = Guid.NewGuid() + System.IO.Path.GetExtension(newsItem.DefaultImg).Replace("!middle", "");
-                    var dftIMG = temp + dftName;
-                    using (var wb = new WebClient())
-                    {
-                        wb.DownloadFile(newsItem.DefaultImg,dftIMG);
-                    }
-                    newsItem.DefaultImg = crtDic + dftName;
-                }
-                #endregion
+			foreach (var v in news)
+			{
+				#region 新闻实体
 
-                #region 新闻内容里的图片上传到微信服务器并替换地址
-                var doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(newsItem.Info);
-                var imgs = doc.DocumentNode.SelectNodes("//img");
-                if (imgs != null && imgs.Count > 0)
-                {
-                    for (var i = 0; i < imgs.Count; i++)
-                    {
-                        try
-                        {
-                            if (imgs[i].HasAttributes && imgs[i].Attributes["src"] != null)
-                            {
-                                var src = imgs[i].Attributes["src"].Value;
+				var spiderItem = DB.yy_Spider.Where(x => x.ID == v.SpiderID).FirstOrDefault();
+				var newsItem = new yy_News()
+				{
+					Title = v.Title,
+					DefaultImg = v.DefaultImage,
+					KeyWords = v.KeyWords,
+					Summary = v.Summary,
+					Info = v.Info,
+					TypeIDs = spiderItem.TypeIDs,
+					UserID = spiderItem.UserID,
+					TargetPlatforms = spiderItem.TargetPlatforms,
+					CreateDate = DateTime.Now,
+					IsShow = 1,
+					CanReply = 1,
+					ImgList = "",
+					LookCount = 0,
+					Recommend = 0,
+					ShowIndex = 0,
+					WechatMediaID = "",
+					WechatNewsUrl = ""
+				};
 
-                                if (src.IndexOf("http://") >= 0)
-                                {
-                                    var savePath = temp + System.IO.Path.GetFileName(src).Replace("!middle", "");
+				#endregion 新闻实体
 
-                                    using (var wc = new WebClient())
-                                    {
-                                        if (!File.Exists(savePath))
-                                        {
-                                            wc.DownloadFile(src, savePath);
-                                        }
-                                    }
+				#region 替换默认图片
 
-                                    imgs[i].Attributes["src"].Value = crtDic + System.IO.Path.GetFileName(src);
-                                }
-                            }
-                        }
-                        catch
-                        {
+				if (String.IsNullOrEmpty(newsItem.DefaultImg))
+				{
+					newsItem.DefaultImg = "/Images/users.jpg";
+				}
+				else
+				{
+					var dftName = Guid.NewGuid() + System.IO.Path.GetExtension(newsItem.DefaultImg).Replace("!middle", "");
+					var dftIMG = temp + dftName;
+					using (var wb = new WebClient())
+					{
+						wb.DownloadFile(newsItem.DefaultImg, dftIMG);
+					}
+					newsItem.DefaultImg = crtDic + dftName;
+				}
 
-                        }
-                        Thread.Sleep(1);
-                    }
+				#endregion 替换默认图片
 
-                    newsItem.Info = doc.DocumentNode.OuterHtml;
-                }
-                #endregion
+				#region 新闻内容里的图片上传到微信服务器并替换地址
 
-                DB.yy_News.Add(newsItem);
+				var doc = new HtmlAgilityPack.HtmlDocument();
+				doc.LoadHtml(newsItem.Info);
+				var imgs = doc.DocumentNode.SelectNodes("//img");
+				if (imgs != null && imgs.Count > 0)
+				{
+					for (var i = 0; i < imgs.Count; i++)
+					{
+						try
+						{
+							if (imgs[i].HasAttributes && imgs[i].Attributes["src"] != null)
+							{
+								var src = imgs[i].Attributes["src"].Value;
 
-                v.IsSync = 1;
+								if (src.IndexOf("http://") >= 0)
+								{
+									var savePath = temp + System.IO.Path.GetFileName(src).Replace("!middle", "");
 
-                DB.SaveChanges();
+									using (var wc = new WebClient())
+									{
+										if (!File.Exists(savePath))
+										{
+											wc.DownloadFile(src, savePath);
+										}
+									}
 
-                MQueue.Send("WechatSync", newsItem.ID.ToString());
-            }
-            
-        }
-    }
+									imgs[i].Attributes["src"].Value = crtDic + System.IO.Path.GetFileName(src);
+								}
+							}
+						}
+						catch
+						{
+						}
+						Thread.Sleep(1);
+					}
+
+					newsItem.Info = doc.DocumentNode.OuterHtml;
+				}
+
+				#endregion 新闻内容里的图片上传到微信服务器并替换地址
+
+				DB.yy_News.Add(newsItem);
+
+				v.IsSync = 1;
+
+				DB.SaveChanges();
+
+				MQueue.Send("WechatSync", newsItem.ID.ToString());
+			}
+		}
+	}
 }

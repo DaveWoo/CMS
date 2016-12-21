@@ -1,300 +1,318 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Http;
+using Newtonsoft.Json;
 using yycms.admin.Models;
 using yycms.entity;
 
 namespace yycms.admin.API
 {
-    /// <summary>
-    /// 通用
-    /// </summary>
-     [BasicAuthen]
-    public class CommonController : BasicAPI
-    {
-        #region 上传文件
-        /// <summary>
-        /// 上传文件
-        /// </summary>
-        [HttpPost]
-        public String Upload()
-        {
-            if (HttpContext.Current.Request.Files.Count < 1) { return ""; }
+	/// <summary>
+	/// 通用
+	/// </summary>
+	[BasicAuthen]
+	public class CommonController : BasicAPI
+	{
+		#region 上传文件
 
-            var result = new List<String>();
-            String today = DateTime.Now.ToString("yyyy-MM-dd");
-            String dic = HostingEnvironment.MapPath("~/images/upload/" + today + "/");
-            if (!Directory.Exists(dic))
-            {
-                Directory.CreateDirectory(dic);
-            }
+		/// <summary>
+		/// 上传文件
+		/// </summary>
+		[HttpPost]
+		public String Upload()
+		{
+			if (HttpContext.Current.Request.Files.Count < 1)
+			{ return ""; }
 
-            for (var i = 0; i < HttpContext.Current.Request.Files.Count; i++)
-            {
-                HttpPostedFile file = HttpContext.Current.Request.Files[i];
+			var result = new List<String>();
+			String today = DateTime.Now.ToString("yyyy-MM-dd");
+			String dic = HostingEnvironment.MapPath("~/images/upload/" + today + "/");
+			if (!Directory.Exists(dic))
+			{
+				Directory.CreateDirectory(dic);
+			}
 
-                if (file.ContentLength < 1)
-                {
-                    continue;
-                }
+			for (var i = 0; i < HttpContext.Current.Request.Files.Count; i++)
+			{
+				HttpPostedFile file = HttpContext.Current.Request.Files[i];
 
-                String fileName = Guid.NewGuid().ToString();
-                String ext = Path.GetExtension(file.FileName);
-                String path = dic + fileName + ext;
-                file.SaveAs(path);
+				if (file.ContentLength < 1)
+				{
+					continue;
+				}
 
-                var config = DB.yy_SiteSetting.FirstOrDefault();
+				String fileName = Guid.NewGuid().ToString();
+				String ext = Path.GetExtension(file.FileName);
+				String path = dic + fileName + ext;
+				file.SaveAs(path);
 
-                #region 加水印
-                if (config!=null && 
-                    config.EnabelWatermark==1 && 
-                    !String.IsNullOrEmpty(config.Watermark) && 
-                    File.Exists(HttpContext.Current.Server.MapPath(config.Watermark)))
-                {
-                    var ImgPath = HttpContext.Current.Server.MapPath(config.Watermark);
+				var config = DB.yy_SiteSetting.FirstOrDefault();
 
-                    var NewImagePath = HttpContext.Current.Server.MapPath("/images/upload/" + today);
+				#region 加水印
 
-                    fileName = Guid.NewGuid().ToString();
+				if (config != null &&
+					config.EnabelWatermark == 1 &&
+					!String.IsNullOrEmpty(config.Watermark) &&
+					File.Exists(HttpContext.Current.Server.MapPath(config.Watermark)))
+				{
+					var ImgPath = HttpContext.Current.Server.MapPath(config.Watermark);
 
-                    var NewImageSavePath = NewImagePath + "\\" + fileName + ext;
+					var NewImagePath = HttpContext.Current.Server.MapPath("/images/upload/" + today);
 
-                    var ImgItem = System.Drawing.Image.FromFile(path);
+					fileName = Guid.NewGuid().ToString();
 
-                    Watermark.AddImageSignPic(ImgItem,  NewImageSavePath , ImgPath, 5, 100, 6);
-                    try
-                    {
-                        File.Delete(path);
-                    }
-                    catch
-                    {
-                        
-                    }
+					var NewImageSavePath = NewImagePath + "\\" + fileName + ext;
 
-                    result.Add("/images/upload/" + today + "/" + fileName + ext);
-                }
-                #endregion
+					var ImgItem = System.Drawing.Image.FromFile(path);
 
-                #region 不加水印
-                else
-                {
-                    result.Add("/images/upload/" + today + "/" + fileName + ext);
-                }
-                #endregion
-            }
+					Watermark.AddImageSignPic(ImgItem, NewImageSavePath, ImgPath, 5, 100, 6);
+					try
+					{
+						File.Delete(path);
+					}
+					catch
+					{
+					}
 
-            if (result.Count < 1) { return ""; }
+					result.Add("/images/upload/" + today + "/" + fileName + ext);
+				}
 
-            return String.Join(",", result);
-        }
-        #endregion
+				#endregion 加水印
 
-        #region 上传证书文件
-        /// <summary>
-        /// 上传证书文件
-        /// </summary>
-        [HttpPost]
-        public String UploadCertificate()
-        {
-            if (HttpContext.Current.Request.Files.Count < 1) { return ""; }
+				#region 不加水印
 
-            var dic = HostingEnvironment.MapPath("~/images/wxpaycertificate/" + User.ID.ToString() + "/");
+				else
+				{
+					result.Add("/images/upload/" + today + "/" + fileName + ext);
+				}
 
-            if (!Directory.Exists(dic))
-            {
-                Directory.CreateDirectory(dic);
-            }
+				#endregion 不加水印
+			}
 
-            var file = HttpContext.Current.Request.Files[0];
-            if (file.ContentLength < 1)
-            {
-                return null;
-            }
+			if (result.Count < 1)
+			{ return ""; }
 
-            if (!Path.GetExtension(file.FileName).ToLower().Equals(".p12"))
-            {
-                return null;
-            }
+			return String.Join(",", result);
+		}
 
-            String savePath = dic + file.FileName;
+		#endregion 上传文件
 
-            if (File.Exists(savePath))
-            {
-                File.Delete(savePath);
-            }
-            file.SaveAs(savePath);
+		#region 上传证书文件
 
-            return savePath;
-        }
-        #endregion
+		/// <summary>
+		/// 上传证书文件
+		/// </summary>
+		[HttpPost]
+		public String UploadCertificate()
+		{
+			if (HttpContext.Current.Request.Files.Count < 1)
+			{ return ""; }
 
-        #region 上传模板包
-        /// <summary>
-        /// 上传证书文件
-        /// </summary>
-        [HttpPost]
-        public Object UploadSkinPackage()
-        {
-            if (HttpContext.Current.Request.Files.Count < 1) 
-            {
-                return new
-                {
-                    code = 1,
-                    msg = "不存在任何文件。"
-                };
-            }
+			var dic = HostingEnvironment.MapPath("~/images/wxpaycertificate/" + User.ID.ToString() + "/");
 
-            var file = HttpContext.Current.Request.Files[0];
-            if (file.ContentLength < 1)
-            {
-                return new 
-                {
-                    code = 2, 
-                    msg = "上传风格包没有任何内容。" 
-                };
-            }
+			if (!Directory.Exists(dic))
+			{
+				Directory.CreateDirectory(dic);
+			}
 
-            if (!Path.GetExtension(file.FileName).ToLower().Equals(".zip"))
-            {
-                return new 
-                {
-                    code = 3, 
-                    msg = "风格包必须是.zip格式。" 
-                };
-            }
+			var file = HttpContext.Current.Request.Files[0];
+			if (file.ContentLength < 1)
+			{
+				return null;
+			}
 
-            byte[] PackageData = null;
+			if (!Path.GetExtension(file.FileName).ToLower().Equals(".p12"))
+			{
+				return null;
+			}
 
-            using (var inputStream = file.InputStream)
-            {
-                var memoryStream = inputStream as MemoryStream;
-                if (memoryStream == null)
-                {
-                    memoryStream = new MemoryStream();
-                    inputStream.CopyTo(memoryStream);
-                }
-                PackageData = memoryStream.ToArray();
-            }
+			String savePath = dic + file.FileName;
 
-            try {
-                String Result = new ImportSkin().Import(PackageData, User.ID);
+			if (File.Exists(savePath))
+			{
+				File.Delete(savePath);
+			}
+			file.SaveAs(savePath);
 
-                if (!String.IsNullOrEmpty(Result))
-                {
-                    return new { code = 4, msg = Result };
-                }
-                else
-                {
-                    return new { code = 0, msg = String.Empty };
-                }
-            }
-            catch(Exception ex)
-            {
-                return new { code = 5, msg = ex.Message + ex.Source + ex.StackTrace };
-            }
+			return savePath;
+		}
 
-        }
-        #endregion
+		#endregion 上传证书文件
 
-        #region 上传蜘蛛
-        /// <summary>
-        /// 上传蜘蛛
-        /// </summary>
-        [HttpPost]
-        public Object UploadCrawler()
-        {
-            if (HttpContext.Current.Request.Files.Count < 1) { return ""; }
+		#region 上传模板包
 
-            String TypeIDs = HttpContext.Current.Request.Params["typeids"];
+		/// <summary>
+		/// 上传证书文件
+		/// </summary>
+		[HttpPost]
+		public Object UploadSkinPackage()
+		{
+			if (HttpContext.Current.Request.Files.Count < 1)
+			{
+				return new
+				{
+					code = 1,
+					msg = "不存在任何文件。"
+				};
+			}
 
-            if(String.IsNullOrEmpty(TypeIDs))
-            {
-                return new { code = 1, msg = "所属分类不能为空。" };
-            }
+			var file = HttpContext.Current.Request.Files[0];
+			if (file.ContentLength < 1)
+			{
+				return new
+				{
+					code = 2,
+					msg = "上传风格包没有任何内容。"
+				};
+			}
 
-            for (var i = 0; i < HttpContext.Current.Request.Files.Count; i++)
-            {
-                HttpPostedFile file = HttpContext.Current.Request.Files[i];
+			if (!Path.GetExtension(file.FileName).ToLower().Equals(".zip"))
+			{
+				return new
+				{
+					code = 3,
+					msg = "风格包必须是.zip格式。"
+				};
+			}
 
-                if (file.ContentLength < 1) { return new { code = 2, msg = "文件内容为空。" }; }
+			byte[] PackageData = null;
 
-                String jsonScript = String.Empty;
+			using (var inputStream = file.InputStream)
+			{
+				var memoryStream = inputStream as MemoryStream;
+				if (memoryStream == null)
+				{
+					memoryStream = new MemoryStream();
+					inputStream.CopyTo(memoryStream);
+				}
+				PackageData = memoryStream.ToArray();
+			}
 
-                try
-                {
-                    using (var sr = new StreamReader(file.InputStream))
-                    {
-                        jsonScript = sr.ReadToEnd();
-                    }
-                }
-                catch
-                {
-                }
+			try
+			{
+				String Result = new ImportSkin().Import(PackageData, User.ID);
 
-                if (string.IsNullOrEmpty(jsonScript)) { return new { code = 3, msg = "文件读取错误。" };  }
+				if (!String.IsNullOrEmpty(Result))
+				{
+					return new { code = 4, msg = Result };
+				}
+				else
+				{
+					return new { code = 0, msg = String.Empty };
+				}
+			}
+			catch (Exception ex)
+			{
+				return new { code = 5, msg = ex.Message + ex.Source + ex.StackTrace };
+			}
+		}
 
-                yy_Spider obj = null;
+		#endregion 上传模板包
 
-                try
-                {
-                    obj = JsonConvert.DeserializeObject<yy_Spider>(jsonScript);
-                    obj.Code = (obj.SourceUrls + obj.RuleConfig).GetHashCode().ToString();
+		#region 上传蜘蛛
 
-                    var spideItem = DB.yy_Spider.Where(x => x.Code == obj.Code).FirstOrDefault();
+		/// <summary>
+		/// 上传蜘蛛
+		/// </summary>
+		[HttpPost]
+		public Object UploadCrawler()
+		{
+			if (HttpContext.Current.Request.Files.Count < 1)
+			{ return ""; }
 
-                    if (spideItem!=null)
-                    {
-                        return new { code = 4, msg = "已存在的蜘蛛。" };
-                    }
+			String TypeIDs = HttpContext.Current.Request.Params["typeids"];
 
-                    obj.CreateDate = DateTime.Now;
-                    obj.LastStartTime = DateTime.Now;
-                    obj.UserID = User.ID;
-                    obj.LookCount = 0;
-                    obj.Status = 0;
-                    obj.TypeIDs = TypeIDs;
-                }
-                catch
-                {
-                    return new { code = 5, msg = "文件格式为空。" };
-                }
+			if (String.IsNullOrEmpty(TypeIDs))
+			{
+				return new { code = 1, msg = "所属分类不能为空。" };
+			}
 
-                DB.yy_Spider.Add(obj);
-                DB.SaveChanges();
-            }
+			for (var i = 0; i < HttpContext.Current.Request.Files.Count; i++)
+			{
+				HttpPostedFile file = HttpContext.Current.Request.Files[i];
 
-            return new { code = 0, msg = "导入成功。" };
-        }
-        #endregion
+				if (file.ContentLength < 1)
+				{ return new { code = 2, msg = "文件内容为空。" }; }
 
-        #region 站点配置
-        /// <summary>
-        /// 站点配置
-        /// </summary>
-        [HttpPost]
-        public ResponseItem SiteConfig(yy_SiteSetting value)
-        {
-            DB.Database.ExecuteSqlCommand("DELETE yy_SiteSetting");
-            DB.yy_SiteSetting.Add(value);
-            DB.SaveChanges();
+				String jsonScript = String.Empty;
 
-            var SiteSettingStr = HttpRuntime.Cache.Get(Const.SiteSettingKey);
+				try
+				{
+					using (var sr = new StreamReader(file.InputStream))
+					{
+						jsonScript = sr.ReadToEnd();
+					}
+				}
+				catch
+				{
+				}
 
-            if (HttpRuntime.Cache[Const.SiteSettingKey] == null)
-            {
-                HttpRuntime.Cache.Remove(Const.SiteSettingKey);
-            }
+				if (string.IsNullOrEmpty(jsonScript))
+				{ return new { code = 3, msg = "文件读取错误。" }; }
 
-            HttpRuntime.Cache.Insert(Const.SiteSettingKey, value);
+				yy_Spider obj = null;
 
-            return new ResponseItem(0, String.Empty);
-        }
-        #endregion
-    }
+				try
+				{
+					obj = JsonConvert.DeserializeObject<yy_Spider>(jsonScript);
+					obj.Code = (obj.SourceUrls + obj.RuleConfig).GetHashCode().ToString();
+
+					var spideItem = DB.yy_Spider.Where(x => x.Code == obj.Code).FirstOrDefault();
+
+					if (spideItem != null)
+					{
+						return new { code = 4, msg = "已存在的蜘蛛。" };
+					}
+
+					obj.CreateDate = DateTime.Now;
+					obj.LastStartTime = DateTime.Now;
+					obj.UserID = User.ID;
+					obj.LookCount = 0;
+					obj.Status = 0;
+					obj.TypeIDs = TypeIDs;
+				}
+				catch
+				{
+					return new { code = 5, msg = "文件格式为空。" };
+				}
+
+				DB.yy_Spider.Add(obj);
+				DB.SaveChanges();
+			}
+
+			return new { code = 0, msg = "导入成功。" };
+		}
+
+		#endregion 上传蜘蛛
+
+		#region 站点配置
+
+		/// <summary>
+		/// 站点配置
+		/// </summary>
+		[HttpPost]
+		public ResponseItem SiteConfig(yy_SiteSetting value)
+		{
+			DB.Database.ExecuteSqlCommand("DELETE yy_SiteSetting");
+			DB.yy_SiteSetting.Add(value);
+			DB.SaveChanges();
+
+			var SiteSettingStr = HttpRuntime.Cache.Get(Const.SiteSettingKey);
+
+			if (HttpRuntime.Cache[Const.SiteSettingKey] == null)
+			{
+				HttpRuntime.Cache.Remove(Const.SiteSettingKey);
+			}
+
+			HttpRuntime.Cache.Insert(Const.SiteSettingKey, value);
+
+			return new ResponseItem(0, String.Empty);
+		}
+
+		#endregion 站点配置
+	}
 }

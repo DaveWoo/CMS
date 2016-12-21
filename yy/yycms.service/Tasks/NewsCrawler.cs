@@ -1,467 +1,504 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NSoup;
-using NSoup.Nodes;
-using PanGu;
-using Quartz;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Web.Security;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NSoup;
+using PanGu;
+using Quartz;
 using yycms.entity;
 using yycms.service;
 using yycms.service.PlugIn;
 
 namespace yueyaCMS.Service.Task
 {
-    /// <summary>
-    /// 爬虫抓取服务 1/分钟/次
-    /// </summary>
-    [DisallowConcurrentExecution]
-    public class NewsCrawler : ITask
-    {
-        enum SpiderStatus
-        {
-            WaitRun = 0,
-            Running = 1,
-            Complate = 2
-        }
+	/// <summary>
+	/// 爬虫抓取服务 1/分钟/次
+	/// </summary>
+	[DisallowConcurrentExecution]
+	public class NewsCrawler : ITask
+	{
+		private enum SpiderStatus
+		{
+			WaitRun = 0,
+			Running = 1,
+			Complate = 2
+		}
 
-        public int WithIntervalInSeconds
-        {
-            get { return 60; }
-        }
+		public int WithIntervalInSeconds
+		{
+			get { return 60; }
+		}
 
-        #region 数据库操作对象
-        DBConnection DB = new DBConnection();
-        #endregion
+		#region 数据库操作对象
 
-        public void Run(Quartz.IJobExecutionContext context)
-        {
-            //获取可用蜘蛛
-            //待执行状态
-            //开启状态
-            //间隔时间符合条件
-            var SpiderCollection = DB.Database.SqlQuery<yy_Spider>("SELECT * FROM yy_Spider WITH(NOLOCK) WHERE Status = 0 AND IsShow = 1 AND DATEADD(second,ExecutionInterval,LastStartTime) < GETDATE()").ToList();
+		private DBConnection DB = new DBConnection();
 
-            if (SpiderCollection.Count > 0)
-            {
-                foreach (var v in SpiderCollection)
-                {
-                    try
-                    {
-                        //蜘蛛开始执行任务
-                        Start(v);
-                    }
-                    catch (Exception ex)
-                    {
-                        Add(ex);
-                    }
-                    finally
-                    {
-                        
-                    }
-                }
-            }
+		#endregion 数据库操作对象
 
-            //状态重置
-            DB.Database.ExecuteSqlCommand("UPDATE yy_Spider SET Status=0");
+		public void Run(Quartz.IJobExecutionContext context)
+		{
+			//获取可用蜘蛛
+			//待执行状态
+			//开启状态
+			//间隔时间符合条件
+			var SpiderCollection = DB.Database.SqlQuery<yy_Spider>("SELECT * FROM yy_Spider WITH(NOLOCK) WHERE Status = 0 AND IsShow = 1 AND DATEADD(second,ExecutionInterval,LastStartTime) < GETDATE()").ToList();
 
-            MQueue.Send("NewsSync", null);
-        }
+			if (SpiderCollection.Count > 0)
+			{
+				foreach (var v in SpiderCollection)
+				{
+					try
+					{
+						//蜘蛛开始执行任务
+						Start(v);
+					}
+					catch (Exception ex)
+					{
+						Add(ex);
+					}
+					finally
+					{
+					}
+				}
+			}
 
-        void Start(yy_Spider Spider)
-        {
-            var _SpiderID = Spider.ID;
+			//状态重置
+			DB.Database.ExecuteSqlCommand("UPDATE yy_Spider SET Status=0");
 
-            var Urls = JsonConvert.DeserializeObject<String[]>(Spider.SourceUrls);
+			MQueue.Send("NewsSync", null);
+		}
 
-            var RuleConfig = JsonConvert.DeserializeObject<JObject>(Spider.RuleConfig);
+		private void Start(yy_Spider Spider)
+		{
+			var _SpiderID = Spider.ID;
 
-            #region 1，更新爬虫状态为[执行中]
-            Spider.Status = (int)SpiderStatus.Running;
-            SqlHelper.ExecuteNonQuery(DB.Database.Connection.ConnectionString, CommandType.Text,
-                "UPDATE yy_Spider SET Status=@Status,LastStartTime=getdate() WHERE ID=@ID",
-                new SqlParameter("@Status", (int)SpiderStatus.Running),
-                new SqlParameter("@ID", _SpiderID));
-            #endregion
+			var Urls = JsonConvert.DeserializeObject<String[]>(Spider.SourceUrls);
 
-            Boolean BreakAll = false;
+			var RuleConfig = JsonConvert.DeserializeObject<JObject>(Spider.RuleConfig);
 
-            foreach (var SourceUrl in Urls)
-            {
-                var NewsCollection = DataList_Convert(_SpiderID, SourceUrl, RuleConfig, Spider.UserID);
+			#region 1，更新爬虫状态为[执行中]
 
-                #region 2，遍历信息源
-                foreach (var NewsItem in NewsCollection)
-                {
-                    NewsItem.Identifer = NewsItem.Title.GetHashCode();
+			Spider.Status = (int)SpiderStatus.Running;
+			SqlHelper.ExecuteNonQuery(DB.Database.Connection.ConnectionString, CommandType.Text,
+				"UPDATE yy_Spider SET Status=@Status,LastStartTime=getdate() WHERE ID=@ID",
+				new SqlParameter("@Status", (int)SpiderStatus.Running),
+				new SqlParameter("@ID", _SpiderID));
 
-                    var ExistsNewsItem =DB.yy_Spider_News.Where(a => a.Identifer == NewsItem.Identifer).FirstOrDefault();
+			#endregion 1，更新爬虫状态为[执行中]
 
-                    #region 如果已经存在的信息源属于当前爬虫，并且发布时间大于等于爬虫最后执行时间，就结束任务
-                    if (ExistsNewsItem != null &&
-                        ExistsNewsItem.SpiderID == Spider.ID &&
-                        ExistsNewsItem.CreateDate >= Spider.LastStartTime)
-                    {
-                        BreakAll = true;
-                        break;
-                    }
-                    #endregion
+			Boolean BreakAll = false;
 
-                    #region 如果当前信息源不存在，就添加
-                    if (ExistsNewsItem == null)
-                    {
-                       DB.yy_Spider_News.Add(NewsItem);
-                       DB.SaveChanges();
-                       continue;
-                    }
-                    #endregion
+			foreach (var SourceUrl in Urls)
+			{
+				var NewsCollection = DataList_Convert(_SpiderID, SourceUrl, RuleConfig, Spider.UserID);
 
-                    #region 如果信息源存在，进行数据整合
-                    else
-                    {
-                        Boolean Merged = false;
+				#region 2，遍历信息源
 
-                        #region 关键词、详情
-                        if (String.IsNullOrEmpty(ExistsNewsItem.KeyWords) && !String.IsNullOrEmpty(NewsItem.KeyWords))
-                        {
-                            ExistsNewsItem.KeyWords = NewsItem.KeyWords;
-                            ExistsNewsItem.Info = NewsItem.Info;
-                            Merged = true;
-                        }
-                        else if (!String.IsNullOrEmpty(ExistsNewsItem.KeyWords) && !String.IsNullOrEmpty(NewsItem.KeyWords))
-                        {
-                            var KeyWordsCount = ExistsNewsItem.KeyWords.Split(',').Length;
-                            var NewKeyWordsCount = NewsItem.KeyWords.Split(',').Length;
+				foreach (var NewsItem in NewsCollection)
+				{
+					NewsItem.Identifer = NewsItem.Title.GetHashCode();
 
-                            if (NewKeyWordsCount > KeyWordsCount)
-                            {
-                                ExistsNewsItem.KeyWords = NewsItem.KeyWords;
-                                ExistsNewsItem.Info = NewsItem.Info;
-                                Merged = true;
-                            }
-                        }
-                        #endregion
+					var ExistsNewsItem = DB.yy_Spider_News.Where(a => a.Identifer == NewsItem.Identifer).FirstOrDefault();
 
-                        #region 图片
-                        if (String.IsNullOrEmpty(ExistsNewsItem.DefaultImage) && !String.IsNullOrEmpty(NewsItem.DefaultImage))
-                        {
-                            ExistsNewsItem.DefaultImage = NewsItem.DefaultImage;
-                            Merged = true;
-                        }
-                        #endregion
+					#region 如果已经存在的信息源属于当前爬虫，并且发布时间大于等于爬虫最后执行时间，就结束任务
 
-                        #region 描述
-                        if (String.IsNullOrEmpty(ExistsNewsItem.Summary) && !String.IsNullOrEmpty(NewsItem.Summary))
-                        {
-                            ExistsNewsItem.Summary = NewsItem.Summary;
-                            Merged = true;
-                        }
-                        #endregion
+					if (ExistsNewsItem != null &&
+						ExistsNewsItem.SpiderID == Spider.ID &&
+						ExistsNewsItem.CreateDate >= Spider.LastStartTime)
+					{
+						BreakAll = true;
+						break;
+					}
 
-                        if (Merged)
-                        {
-                            SqlHelper.ExecuteNonQuery(DB.Database.Connection.ConnectionString, 
-                                CommandType.Text,
-                                "UPDATE yy_Spider_News SET KeyWords=@KeyWords,Info=@Info,Summary=@Summary,DefaultImage=@DefaultImage,LastStartTime=getdate() WHERE ID=@ID",
-                                new SqlParameter("@KeyWords", ExistsNewsItem.KeyWords),
-                                new SqlParameter("@Info", ExistsNewsItem.Info),
-                                new SqlParameter("@Summary", ExistsNewsItem.Summary),
-                                new SqlParameter("@DefaultImage", ExistsNewsItem.DefaultImage),
-                                new SqlParameter("@ID", ExistsNewsItem.ID));
-                        }
-                    }
-                    #endregion
+					#endregion 如果已经存在的信息源属于当前爬虫，并且发布时间大于等于爬虫最后执行时间，就结束任务
 
-                    Thread.Sleep(1);
-                }
-                #endregion
+					#region 如果当前信息源不存在，就添加
 
-                if (BreakAll) { break; }
+					if (ExistsNewsItem == null)
+					{
+						DB.yy_Spider_News.Add(NewsItem);
+						DB.SaveChanges();
+						continue;
+					}
 
-                Thread.Sleep(1);
-            }
+					#endregion 如果当前信息源不存在，就添加
 
-            #region 3，更新爬虫状态[已完成]
-            if (Spider.Status == (int)SpiderStatus.Running)
-            {
-                SqlHelper.ExecuteNonQuery(DB.Database.Connection.ConnectionString, CommandType.Text,
-                    "UPDATE yy_Spider SET Status=@Status,LastStartTime=@LastStartTime WHERE ID=@ID",
-                                new SqlParameter("@Status", (int)SpiderStatus.Complate),
-                                new SqlParameter("@LastStartTime", DateTime.Now),
-                                new SqlParameter("@ID", _SpiderID));
-            }
-            #endregion
-        }
+					#region 如果信息源存在，进行数据整合
 
-        List<yy_Spider_News> DataList_Convert(Int64 _SpiderID, String _Url, JObject _Config,long _UserID)
-        {
-            String Html = Get(_Url);
+					else
+					{
+						Boolean Merged = false;
 
-            var doc = NSoupClient.Parse(Html);
-            
-            String SourceListMatch = _Config["SourceListMatch"].ToString();
+						#region 关键词、详情
 
-            var SourceList = doc.Select(SourceListMatch);
+						if (String.IsNullOrEmpty(ExistsNewsItem.KeyWords) && !String.IsNullOrEmpty(NewsItem.KeyWords))
+						{
+							ExistsNewsItem.KeyWords = NewsItem.KeyWords;
+							ExistsNewsItem.Info = NewsItem.Info;
+							Merged = true;
+						}
+						else if (!String.IsNullOrEmpty(ExistsNewsItem.KeyWords) && !String.IsNullOrEmpty(NewsItem.KeyWords))
+						{
+							var KeyWordsCount = ExistsNewsItem.KeyWords.Split(',').Length;
+							var NewKeyWordsCount = NewsItem.KeyWords.Split(',').Length;
 
-            var Result = new List<yy_Spider_News>();
+							if (NewKeyWordsCount > KeyWordsCount)
+							{
+								ExistsNewsItem.KeyWords = NewsItem.KeyWords;
+								ExistsNewsItem.Info = NewsItem.Info;
+								Merged = true;
+							}
+						}
 
-            if (SourceList.Count < 1) { return Result; }
+						#endregion 关键词、详情
 
-            for (int i = 0; i < SourceList.Count; i++)
-            {
-                var v = SourceList[i];
+						#region 图片
 
-                var Item = new yy_Spider_News() { SpiderID = _SpiderID, UserID = _UserID, IsSync = 0 };
+						if (String.IsNullOrEmpty(ExistsNewsItem.DefaultImage) && !String.IsNullOrEmpty(NewsItem.DefaultImage))
+						{
+							ExistsNewsItem.DefaultImage = NewsItem.DefaultImage;
+							Merged = true;
+						}
 
-                #region 转换
-                try
-                {
-                    #region Title
-                    var TitleMatch = _Config["TitleMatch"].ToString();
-                    var _TitleEntity = v.Select(TitleMatch).FirstOrDefault();
-                    if (_TitleEntity != null)
-                    {
-                        var _Title = _TitleEntity.OwnText();
-                        var _TitleReplace = string.Empty;
-                        if (_Config["TitleReplace"] != null)
-                        {
-                            _TitleReplace = _Config["TitleReplace"].ToString(); 
-                        }
-                        Item.Title = Str_Replace(_Title, _TitleReplace);
-                    }
-                    else
-                    {
-                        Item.Title = "";
-                    }
-                    #endregion
+						#endregion 图片
 
-                    #region DefaultImg
-                    var DefaultImgMatch = _Config["DefaultImgMatch"].ToString();
-                    var _DefaultImageEntity = v.Select(DefaultImgMatch).FirstOrDefault();
-                    if (_DefaultImageEntity != null)
-                    {
-                        var _DefaultImage = _DefaultImageEntity.Attributes["src"].ToString();
-                        var _DefaultImgReplace = string.Empty;
-                        if (_Config["DefaultImgReplace"] != null)
-                        {
-                            _DefaultImgReplace = _Config["DefaultImgReplace"].ToString();
-                        }
-                        Item.DefaultImage = Str_Replace(_DefaultImage, _DefaultImgReplace);
-                    }
-                    else { Item.DefaultImage = ""; }
-                    #endregion
+						#region 描述
 
-                    #region Summary
-                    var SummaryMatch = _Config["SummaryMatch"].ToString();
-                    var _SummaryEntity = v.Select(SummaryMatch).FirstOrDefault();
-                    if (_SummaryEntity != null)
-                    {
-                        String _Summary = _SummaryEntity.OwnText();
-                        String _SummaryReplace = string.Empty;
-                        if (_Config["SummaryReplace"] != null)
-                        {
-                            _SummaryReplace = _Config["SummaryReplace"].ToString();
-                        }
-                        Item.Summary = Str_Replace(_Summary, _SummaryReplace);
-                    }
-                    else { Item.Summary = ""; }
-                    #endregion
+						if (String.IsNullOrEmpty(ExistsNewsItem.Summary) && !String.IsNullOrEmpty(NewsItem.Summary))
+						{
+							ExistsNewsItem.Summary = NewsItem.Summary;
+							Merged = true;
+						}
 
-                    #region SourceFrom
-                    var SourceFromMatch = _Config["SourceFromMatch"].ToString();
-                    var _SourceUrlEntity = v.Select(SourceFromMatch).FirstOrDefault();
-                    if (_SourceUrlEntity != null)
-                    {
-                        String SourceFrom = _SourceUrlEntity.Attributes["href"].ToString();
-                        String SourceFromReplace = string.Empty;
-                        if (_Config["SourceFromReplace"] != null)
-                        {
-                            SourceFromReplace = _Config["SourceFromReplace"].ToString();
-                        }
-                        Item.SourceUrl = Str_Replace(SourceFrom, SourceFromReplace);
-                    }
-                    else { Item.SourceUrl = ""; }
-                    #endregion
+						#endregion 描述
 
-                    #region Info
-                    var InfoMatch = _Config["InfoMatch"].ToString();
-                    var InfoSource = Get(Item.SourceUrl);
-                    var InfoDoc =NSoupClient.Parse(InfoSource);
-                    var InfoNode = InfoDoc.Select(InfoMatch).FirstOrDefault();
-                    if (InfoNode != null)
-                    {
-                        var InfoStr = InfoNode.OuterHtml();
-                        var InfoReplace = string.Empty;
-                        if (_Config["InfoReplace"] != null)
-                        {
-                            InfoReplace = _Config["InfoReplace"].ToString();
-                        } 
-                        InfoStr = Str_Replace(InfoStr, InfoReplace);
-                        Item.Info = InfoStr;
-                    }
-                    else { Item.Info = ""; }
-                    #endregion
+						if (Merged)
+						{
+							SqlHelper.ExecuteNonQuery(DB.Database.Connection.ConnectionString,
+								CommandType.Text,
+								"UPDATE yy_Spider_News SET KeyWords=@KeyWords,Info=@Info,Summary=@Summary,DefaultImage=@DefaultImage,LastStartTime=getdate() WHERE ID=@ID",
+								new SqlParameter("@KeyWords", ExistsNewsItem.KeyWords),
+								new SqlParameter("@Info", ExistsNewsItem.Info),
+								new SqlParameter("@Summary", ExistsNewsItem.Summary),
+								new SqlParameter("@DefaultImage", ExistsNewsItem.DefaultImage),
+								new SqlParameter("@ID", ExistsNewsItem.ID));
+						}
+					}
 
-                    #region KeyWords
-                    Segment.Init(Environment.CurrentDirectory + "\\Segment.xml");
-                    Segment segment = new Segment();
-                    ICollection<WordInfo> words = segment.DoSegment(Item.Info);
-                    var Words = words.Where(a =>
-                        a.Word.Length > 1 &&
-                        (a.OriginalWordType == WordType.English ||
-                        a.OriginalWordType == WordType.SimplifiedChinese ||
-                        a.OriginalWordType == WordType.TraditionalChinese ||
-                        a.OriginalWordType == WordType.Synonym)
-                        ).OrderBy(a => a.Rank).Select(a => a.Word).Distinct().Take(20).ToArray();
+					#endregion 如果信息源存在，进行数据整合
 
-                    Item.KeyWords = String.Join(",", Words);
-                    #endregion
+					Thread.Sleep(1);
+				}
 
-                    #region ReleaseTime
-                    var ReleaseTimeMatch = _Config["ReleaseTimeMatch"].ToString();
-                    var _CreateDateEntity = InfoDoc.Select(ReleaseTimeMatch).FirstOrDefault();
-                    if (_CreateDateEntity != null)
-                    {
-                        String _CreateDate = _CreateDateEntity.OwnText();
-                        String _ReleaseTimeReplace = string.Empty;
-                        if (_Config["ReleaseTimeReplace"] != null)
-                        {
-                            _ReleaseTimeReplace = _Config["ReleaseTimeReplace"].ToString();
-                        } 
-                        Item.CreateDate = DateTime.Parse(Str_Replace(_CreateDate, _ReleaseTimeReplace));
-                    }
-                    else { Item.CreateDate = DateTime.Now; }
-                    #endregion
+				#endregion 2，遍历信息源
 
-                    #region 如果默认图片为空，从详情中匹配
-                    if (String.IsNullOrEmpty(Item.DefaultImage))
-                    {
-                        Regex regImg = new Regex(@"<img\b[^<>]*?\bsrc[\s\t\r\n]*=[\s\t\r\n]*[""']?[\s\t\r\n]*(?<imgUrl>[^\s\t\r\n""'<>]*)[^<>]*?/?[\s\t\r\n]*>",
-                            RegexOptions.IgnoreCase);
-                        MatchCollection matches = regImg.Matches(Item.Info);
-                        foreach (Match match in matches)
-                        {
-                            if (!String.IsNullOrEmpty(match.Groups["imgUrl"].Value))
-                            {
-                                Item.DefaultImage = match.Groups["imgUrl"].Value;
-                            }
-                            break;
-                        }
-                    }
-                    #endregion
-                }
-                catch 
-                {
-                    Item = null; 
-                }
-                #endregion
+				if (BreakAll)
+				{ break; }
 
-                if (Item != null)
-                {
-                    Result.Add(Item);
-                }
+				Thread.Sleep(1);
+			}
 
-                Thread.Sleep(1);
-            }
+			#region 3，更新爬虫状态[已完成]
 
-            #region 记录历史，重新计算蜘蛛质量
-            DB.Database.ExecuteSqlCommand("INSERT INTO yy_Spider_Log ([SpiderID],[TotalUrl],[SuccessUrl])VALUES(" + _SpiderID + "," + SourceList.Count + "," + Result.Count + ")");
-            DB.Database.ExecuteSqlCommand(string.Format(@"UPDATE [dbo].[yy_Spider] SET 
-            Quality = (SELECT SUM(TotalUrl) / SUM(SuccessUrl) * 100 FROM [dbo].[yy_Spider_Log] 
+			if (Spider.Status == (int)SpiderStatus.Running)
+			{
+				SqlHelper.ExecuteNonQuery(DB.Database.Connection.ConnectionString, CommandType.Text,
+					"UPDATE yy_Spider SET Status=@Status,LastStartTime=@LastStartTime WHERE ID=@ID",
+								new SqlParameter("@Status", (int)SpiderStatus.Complate),
+								new SqlParameter("@LastStartTime", DateTime.Now),
+								new SqlParameter("@ID", _SpiderID));
+			}
+
+			#endregion 3，更新爬虫状态[已完成]
+		}
+
+		private List<yy_Spider_News> DataList_Convert(Int64 _SpiderID, String _Url, JObject _Config, long _UserID)
+		{
+			String Html = Get(_Url);
+
+			var doc = NSoupClient.Parse(Html);
+
+			String SourceListMatch = _Config["SourceListMatch"].ToString();
+
+			var SourceList = doc.Select(SourceListMatch);
+
+			var Result = new List<yy_Spider_News>();
+
+			if (SourceList.Count < 1)
+			{ return Result; }
+
+			for (int i = 0; i < SourceList.Count; i++)
+			{
+				var v = SourceList[i];
+
+				var Item = new yy_Spider_News() { SpiderID = _SpiderID, UserID = _UserID, IsSync = 0 };
+
+				#region 转换
+
+				try
+				{
+					#region Title
+
+					var TitleMatch = _Config["TitleMatch"].ToString();
+					var _TitleEntity = v.Select(TitleMatch).FirstOrDefault();
+					if (_TitleEntity != null)
+					{
+						var _Title = _TitleEntity.OwnText();
+						var _TitleReplace = string.Empty;
+						if (_Config["TitleReplace"] != null)
+						{
+							_TitleReplace = _Config["TitleReplace"].ToString();
+						}
+						Item.Title = Str_Replace(_Title, _TitleReplace);
+					}
+					else
+					{
+						Item.Title = "";
+					}
+
+					#endregion Title
+
+					#region DefaultImg
+
+					var DefaultImgMatch = _Config["DefaultImgMatch"].ToString();
+					var _DefaultImageEntity = v.Select(DefaultImgMatch).FirstOrDefault();
+					if (_DefaultImageEntity != null)
+					{
+						var _DefaultImage = _DefaultImageEntity.Attributes["src"].ToString();
+						var _DefaultImgReplace = string.Empty;
+						if (_Config["DefaultImgReplace"] != null)
+						{
+							_DefaultImgReplace = _Config["DefaultImgReplace"].ToString();
+						}
+						Item.DefaultImage = Str_Replace(_DefaultImage, _DefaultImgReplace);
+					}
+					else
+					{ Item.DefaultImage = ""; }
+					#endregion DefaultImg
+
+					#region Summary
+
+					var SummaryMatch = _Config["SummaryMatch"].ToString();
+					var _SummaryEntity = v.Select(SummaryMatch).FirstOrDefault();
+					if (_SummaryEntity != null)
+					{
+						String _Summary = _SummaryEntity.OwnText();
+						String _SummaryReplace = string.Empty;
+						if (_Config["SummaryReplace"] != null)
+						{
+							_SummaryReplace = _Config["SummaryReplace"].ToString();
+						}
+						Item.Summary = Str_Replace(_Summary, _SummaryReplace);
+					}
+					else
+					{ Item.Summary = ""; }
+					#endregion Summary
+
+					#region SourceFrom
+
+					var SourceFromMatch = _Config["SourceFromMatch"].ToString();
+					var _SourceUrlEntity = v.Select(SourceFromMatch).FirstOrDefault();
+					if (_SourceUrlEntity != null)
+					{
+						String SourceFrom = _SourceUrlEntity.Attributes["href"].ToString();
+						String SourceFromReplace = string.Empty;
+						if (_Config["SourceFromReplace"] != null)
+						{
+							SourceFromReplace = _Config["SourceFromReplace"].ToString();
+						}
+						Item.SourceUrl = Str_Replace(SourceFrom, SourceFromReplace);
+					}
+					else
+					{ Item.SourceUrl = ""; }
+					#endregion SourceFrom
+
+					#region Info
+
+					var InfoMatch = _Config["InfoMatch"].ToString();
+					var InfoSource = Get(Item.SourceUrl);
+					var InfoDoc = NSoupClient.Parse(InfoSource);
+					var InfoNode = InfoDoc.Select(InfoMatch).FirstOrDefault();
+					if (InfoNode != null)
+					{
+						var InfoStr = InfoNode.OuterHtml();
+						var InfoReplace = string.Empty;
+						if (_Config["InfoReplace"] != null)
+						{
+							InfoReplace = _Config["InfoReplace"].ToString();
+						}
+						InfoStr = Str_Replace(InfoStr, InfoReplace);
+						Item.Info = InfoStr;
+					}
+					else
+					{ Item.Info = ""; }
+					#endregion Info
+
+					#region KeyWords
+
+					Segment.Init(Environment.CurrentDirectory + "\\Segment.xml");
+					Segment segment = new Segment();
+					ICollection<WordInfo> words = segment.DoSegment(Item.Info);
+					var Words = words.Where(a =>
+						a.Word.Length > 1 &&
+						(a.OriginalWordType == WordType.English ||
+						a.OriginalWordType == WordType.SimplifiedChinese ||
+						a.OriginalWordType == WordType.TraditionalChinese ||
+						a.OriginalWordType == WordType.Synonym)
+						).OrderBy(a => a.Rank).Select(a => a.Word).Distinct().Take(20).ToArray();
+
+					Item.KeyWords = String.Join(",", Words);
+
+					#endregion KeyWords
+
+					#region ReleaseTime
+
+					var ReleaseTimeMatch = _Config["ReleaseTimeMatch"].ToString();
+					var _CreateDateEntity = InfoDoc.Select(ReleaseTimeMatch).FirstOrDefault();
+					if (_CreateDateEntity != null)
+					{
+						String _CreateDate = _CreateDateEntity.OwnText();
+						String _ReleaseTimeReplace = string.Empty;
+						if (_Config["ReleaseTimeReplace"] != null)
+						{
+							_ReleaseTimeReplace = _Config["ReleaseTimeReplace"].ToString();
+						}
+						Item.CreateDate = DateTime.Parse(Str_Replace(_CreateDate, _ReleaseTimeReplace));
+					}
+					else
+					{ Item.CreateDate = DateTime.Now; }
+					#endregion ReleaseTime
+
+					#region 如果默认图片为空，从详情中匹配
+
+					if (String.IsNullOrEmpty(Item.DefaultImage))
+					{
+						Regex regImg = new Regex(@"<img\b[^<>]*?\bsrc[\s\t\r\n]*=[\s\t\r\n]*[""']?[\s\t\r\n]*(?<imgUrl>[^\s\t\r\n""'<>]*)[^<>]*?/?[\s\t\r\n]*>",
+							RegexOptions.IgnoreCase);
+						MatchCollection matches = regImg.Matches(Item.Info);
+						foreach (Match match in matches)
+						{
+							if (!String.IsNullOrEmpty(match.Groups["imgUrl"].Value))
+							{
+								Item.DefaultImage = match.Groups["imgUrl"].Value;
+							}
+							break;
+						}
+					}
+
+					#endregion 如果默认图片为空，从详情中匹配
+				}
+				catch
+				{
+					Item = null;
+				}
+
+				#endregion 转换
+
+				if (Item != null)
+				{
+					Result.Add(Item);
+				}
+
+				Thread.Sleep(1);
+			}
+
+			#region 记录历史，重新计算蜘蛛质量
+
+			DB.Database.ExecuteSqlCommand("INSERT INTO yy_Spider_Log ([SpiderID],[TotalUrl],[SuccessUrl])VALUES(" + _SpiderID + "," + SourceList.Count + "," + Result.Count + ")");
+			DB.Database.ExecuteSqlCommand(string.Format(@"UPDATE [dbo].[yy_Spider] SET
+            Quality = (SELECT SUM(TotalUrl) / SUM(SuccessUrl) * 100 FROM [dbo].[yy_Spider_Log]
             WITH(NOLOCK) WHERE SpiderID={0}),LastStartTime=getdate() WHERE ID = {0}", _SpiderID));
-            #endregion
 
-            return Result;
-        }
+			#endregion 记录历史，重新计算蜘蛛质量
 
-        String Str_Replace(String _txt, String _exp)
-        {
-            if (String.IsNullOrEmpty(_exp))
-            {
-                return _txt;
-            }
+			return Result;
+		}
 
-            var arr = _exp.Split(new String[1] { "," }, StringSplitOptions.RemoveEmptyEntries);
+		private String Str_Replace(String _txt, String _exp)
+		{
+			if (String.IsNullOrEmpty(_exp))
+			{
+				return _txt;
+			}
 
-            foreach (var v in arr)
-            {
-                var ar = v.Split(new String[1] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+			var arr = _exp.Split(new String[1] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (ar.Length == 1) 
-                {
-                    _txt = _txt.Replace(ar[0], "");
-                }
+			foreach (var v in arr)
+			{
+				var ar = v.Split(new String[1] { "|" }, StringSplitOptions.RemoveEmptyEntries);
 
-                else if (ar.Length == 2)
-                {
-                    _txt = _txt.Replace(ar[0], ar[1]); 
-                }
-            }
+				if (ar.Length == 1)
+				{
+					_txt = _txt.Replace(ar[0], "");
+				}
+				else if (ar.Length == 2)
+				{
+					_txt = _txt.Replace(ar[0], ar[1]);
+				}
+			}
 
-            return _txt.Trim();
-        }
+			return _txt.Trim();
+		}
 
-        String Get(String _Url)
-        {
-            using (var wc = new WebClient())
-            {
-                wc.Encoding = Encoding.UTF8;
+		private String Get(String _Url)
+		{
+			using (var wc = new WebClient())
+			{
+				wc.Encoding = Encoding.UTF8;
 
-                return wc.DownloadString(_Url);
-            }
-        }
+				return wc.DownloadString(_Url);
+			}
+		}
 
-        void Add(Exception ex)
-        {
-            var _Error = new yy_SysError()
-            {
-                HelpLink = ex.HelpLink ?? "",
-                Message = ex.Message ?? "",
-                Source = ex.Source ?? "",
-                StackTrace = ex.StackTrace ?? "",
-                TargetSite = ex.TargetSite.Name ?? ""
-            };
+		private void Add(Exception ex)
+		{
+			var _Error = new yy_SysError()
+			{
+				HelpLink = ex.HelpLink ?? "",
+				Message = ex.Message ?? "",
+				Source = ex.Source ?? "",
+				StackTrace = ex.StackTrace ?? "",
+				TargetSite = ex.TargetSite.Name ?? ""
+			};
 
-            _Error.CreateDate = DateTime.Now;
+			_Error.CreateDate = DateTime.Now;
 
-            _Error.LogKey =
-                MD5(_Error.Message +
-                _Error.HelpLink +
-                _Error.Source +
-                _Error.StackTrace +
-                _Error.TargetSite);
+			_Error.LogKey =
+				MD5(_Error.Message +
+				_Error.HelpLink +
+				_Error.Source +
+				_Error.StackTrace +
+				_Error.TargetSite);
 
-            String Insert_Cmd = "INSERT INTO yy_SysError ([LogKey],[Message],[Source],[StackTrace],[HelpLink],[TargetSite],[CreateDate])" +
-                " VALUES (@LogKey,@Message,@Source,@StackTrace,@HelpLink,@TargetSite,@CreateDate)";
+			String Insert_Cmd = "INSERT INTO yy_SysError ([LogKey],[Message],[Source],[StackTrace],[HelpLink],[TargetSite],[CreateDate])" +
+				" VALUES (@LogKey,@Message,@Source,@StackTrace,@HelpLink,@TargetSite,@CreateDate)";
 
-            SqlHelper.ExecuteNonQuery(DB.Database.Connection.ConnectionString, CommandType.Text, Insert_Cmd,
-                new SqlParameter("@LogKey", _Error.LogKey),
-                new SqlParameter("@Message", _Error.Message),
-                new SqlParameter("@Source", _Error.Source),
-                new SqlParameter("@StackTrace", _Error.StackTrace),
-                new SqlParameter("@HelpLink", _Error.HelpLink),
-                new SqlParameter("@TargetSite", _Error.TargetSite),
-                new SqlParameter("@CreateDate", _Error.CreateDate));
-        }
+			SqlHelper.ExecuteNonQuery(DB.Database.Connection.ConnectionString, CommandType.Text, Insert_Cmd,
+				new SqlParameter("@LogKey", _Error.LogKey),
+				new SqlParameter("@Message", _Error.Message),
+				new SqlParameter("@Source", _Error.Source),
+				new SqlParameter("@StackTrace", _Error.StackTrace),
+				new SqlParameter("@HelpLink", _Error.HelpLink),
+				new SqlParameter("@TargetSite", _Error.TargetSite),
+				new SqlParameter("@CreateDate", _Error.CreateDate));
+		}
 
-        String MD5(String _text)
-        {
-            using (var md5 = new MD5CryptoServiceProvider())
-            {
-                byte[] result = md5.ComputeHash(Encoding.UTF8.GetBytes(_text));
+		private String MD5(String _text)
+		{
+			using (var md5 = new MD5CryptoServiceProvider())
+			{
+				byte[] result = md5.ComputeHash(Encoding.UTF8.GetBytes(_text));
 
-                return Encoding.UTF8.GetString(result);
-            }
-        }
-    }
+				return Encoding.UTF8.GetString(result);
+			}
+		}
+	}
 }

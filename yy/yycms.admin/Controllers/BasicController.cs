@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using yycms.admin.Models;
 using yycms.entity;
 
@@ -13,24 +12,32 @@ namespace yycms.admin.Controllers
 	public class BasicController : Controller
 	{
 		#region 数据库
+
 		private DBConnection _DB;
+
 		protected DBConnection DB
 		{
 			get { if (_DB == null) { _DB = new DBConnection(); } return _DB; }
 		}
-		#endregion
+
+		#endregion 数据库
 
 		#region 当前用户
+
 		private yy_User _User;
+
 		protected new yy_User User
 		{
 			get { return _User; }
 			set { _User = value; }
 		}
-		#endregion
+
+		#endregion 当前用户
 
 		#region 当前用户的权限集合
-		List<yy_Permission> _Permission;
+
+		private List<yy_Permission> _Permission;
+
 		protected List<yy_Permission> Permission
 		{
 			get
@@ -42,15 +49,19 @@ namespace yycms.admin.Controllers
 					if (PermissionStr == null)
 					{
 						#region 用户权限
+
 						_Permission = DB.Database.SqlQuery<yy_Permission>(
 							String.Format(Const.PermissionSql, User.Permission)).ToList();
 						HttpRuntime.Cache.Insert(Const.PermissionCacheKey + User.ID.ToString(), _Permission);
-						#endregion
+
+						#endregion 用户权限
 
 						#region 权限分组
+
 						var _PermissionType = DB.yy_Permission_Type.ToList();
 						HttpRuntime.Cache.Insert(Const.PermissionTypeCacheKey, _PermissionType);
-						#endregion
+
+						#endregion 权限分组
 					}
 					else
 					{
@@ -61,10 +72,13 @@ namespace yycms.admin.Controllers
 				return _Permission;
 			}
 		}
-		#endregion
+
+		#endregion 当前用户的权限集合
 
 		#region 系统配置
-		yy_SiteSetting _SiteSetting;
+
+		private yy_SiteSetting _SiteSetting;
+
 		protected yy_SiteSetting SiteSetting
 		{
 			get
@@ -88,7 +102,8 @@ namespace yycms.admin.Controllers
 				return _SiteSetting;
 			}
 		}
-		#endregion
+
+		#endregion 系统配置
 
 		/// <summary>
 		/// 权限验证，无需权限请在action或controller标记AllowAnonymousAttribute
@@ -97,11 +112,15 @@ namespace yycms.admin.Controllers
 		protected override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
 			#region 站点配置
+
 			ViewBag.SiteSetting = SiteSetting;
-			#endregion
+
+			#endregion 站点配置
 
 			//todo
+
 			#region 获取用户信息
+
 			var UserCK = Request.Cookies.Get(Const.SessionId);
 			//UserCK = null;
 			if (UserCK != null && !String.IsNullOrEmpty(UserCK.Value))
@@ -114,9 +133,11 @@ namespace yycms.admin.Controllers
 				}
 				catch { }
 			}
-			#endregion
+
+			#endregion 获取用户信息
 
 			#region 如果无需权限验证直接跳过
+
 			if (filterContext.ActionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true) ||
 			  filterContext.ActionDescriptor.ControllerDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true))
 			{
@@ -124,17 +145,21 @@ namespace yycms.admin.Controllers
 
 				return;
 			}
-			#endregion
+
+			#endregion 如果无需权限验证直接跳过
 
 			#region 登陆失败，或没有登陆
+
 			if (User == null)
 			{
 				filterContext.Result = new RedirectResult("/Admin/Login");
 				return;
 			}
-			#endregion
+
+			#endregion 登陆失败，或没有登陆
 
 			#region 没有权限访问当前页面
+
 			String ActionPath = "/" +
 				filterContext.ActionDescriptor.ControllerDescriptor.ControllerName.ToLower() +
 				"/" +
@@ -151,7 +176,8 @@ namespace yycms.admin.Controllers
 			ViewBag.CurrentPage = CurrentViewPage;
 
 			base.OnActionExecuting(filterContext);
-			#endregion
+
+			#endregion 没有权限访问当前页面
 
 			ViewBag.User = User;
 		}

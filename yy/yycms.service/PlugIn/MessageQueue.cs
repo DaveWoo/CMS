@@ -1,35 +1,36 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Messaging;
 
 namespace yycms.service.PlugIn
 {
-    public class MQueue
-    {
-        #region 发送消息
-       public static void Send(String queueName, String data)
-        {
-            var QueenBasePath = ConfigurationManager.AppSettings["MessageQueueServer"];
+	public class MQueue
+	{
+		#region 发送消息
 
-            //新建消息循环队列或连接到已有的消息队列
-            var Path = QueenBasePath + queueName;
+		public static void Send(String queueName, String data)
+		{
+			var QueenBasePath = ConfigurationManager.AppSettings["MessageQueueServer"];
 
-            MessageQueue mq;
+			//新建消息循环队列或连接到已有的消息队列
+			var Path = QueenBasePath + queueName;
 
-            if (MessageQueue.Exists(Path))
-            {
-                mq = new MessageQueue(Path);
-            }
-            else
-            {
-                mq = MessageQueue.Create(Path);
-            }
+			MessageQueue mq;
 
-            mq.Formatter = new XmlMessageFormatter(new Type[] { typeof(string) });
+			if (MessageQueue.Exists(Path))
+			{
+				mq = new MessageQueue(Path);
+			}
+			else
+			{
+				mq = MessageQueue.Create(Path);
+			}
 
-            mq.Send(data);
-        }
-        #endregion
-    }
+			mq.Formatter = new XmlMessageFormatter(new Type[] { typeof(string) });
+
+			mq.Send(data);
+		}
+
+		#endregion 发送消息
+	}
 }

@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Configuration;
 using System.Linq;
 using System.Messaging;
@@ -12,30 +9,36 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.Http;
-using yycms.entity;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using yycms.admin.Models;
+using yycms.entity;
 
 namespace yycms.admin.API
 {
 	public class BasicAPI : ApiController
 	{
 		#region 数据库
+
 		private DBConnection _DB;
+
 		protected DBConnection DB
 		{
 			get { if (_DB == null) { _DB = new DBConnection(); } return _DB; }
 		}
-		#endregion
+
+		#endregion 数据库
 
 		#region 用户
+
 		private yy_User _User;
+
 		protected new yy_User User
 		{
 			get
 			{
 				if (_User != null)
 				{ return _User; }
-
 
 				try
 				{
@@ -71,9 +74,11 @@ namespace yycms.admin.API
 				return _User;
 			}
 		}
-		#endregion
+
+		#endregion 用户
 
 		#region request
+
 		private HttpRequestBase _request;
 
 		protected HttpRequestBase request
@@ -89,7 +94,8 @@ namespace yycms.admin.API
 				return _request;
 			}
 		}
-		#endregion
+
+		#endregion request
 
 		protected HttpResponseMessage ResponseMessage(Object _Content, CookieHeaderValue Cookies = null, HttpStatusCode _Code = HttpStatusCode.OK)
 		{
@@ -160,6 +166,7 @@ namespace yycms.admin.API
 		}
 
 		#region datetime转换为unixtime
+
 		/// <summary>
 		/// datetime转换为unixtime
 		/// </summary>
@@ -169,15 +176,17 @@ namespace yycms.admin.API
 
 			return (int)(time - startTime).TotalSeconds;
 		}
-		#endregion
+
+		#endregion datetime转换为unixtime
+
 		protected override void Dispose(bool disposing)
 		{
 			DB.Dispose();
 			base.Dispose(disposing);
 		}
 
-
 		#region 发送消息
+
 		protected void MessageQueue_Send(String queueName, String data)
 		{
 			var QueenBasePath = ConfigurationManager.AppSettings["MessageQueueServer"];
@@ -200,7 +209,8 @@ namespace yycms.admin.API
 
 			mq.Send(data);
 		}
-		#endregion
+
+		#endregion 发送消息
 
 		/// <summary>
 		/// 刷新会话令牌
@@ -211,6 +221,7 @@ namespace yycms.admin.API
 			var _Mechant = DB.yy_Platforms.Where(x => x.Code == 11 && x.UserID == User.ID).FirstOrDefault();
 
 			#region 如果商家Access_token过期就刷新，调用接口需要用这个
+
 			if (String.IsNullOrEmpty(_Mechant.Access_token) || _Mechant.Access_token_Expires_in < DateTime.Now)
 			{
 				var _res = new WebClient().DownloadString(
@@ -226,8 +237,11 @@ namespace yycms.admin.API
 					DB.SaveChanges();
 				}
 			}
-			#endregion
+
+			#endregion 如果商家Access_token过期就刷新，调用接口需要用这个
+
 			#region 如果商家jsapi_ticket过期就刷新，网页里用jsAPi需要用这个
+
 			if (String.IsNullOrEmpty(_Mechant.jsapi_ticket) || _Mechant.jsapi_ticket_Expires_in < DateTime.Now)
 			{
 				var _res = new WebClient().DownloadString(String.Format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi",
@@ -240,8 +254,11 @@ namespace yycms.admin.API
 					DB.SaveChanges();
 				}
 			}
-			#endregion
+
+			#endregion 如果商家jsapi_ticket过期就刷新，网页里用jsAPi需要用这个
+
 			#region 如果商家api_ticket过期就刷新,网页里用js发券，做签名时需要用到这个
+
 			if (String.IsNullOrEmpty(_Mechant.api_ticket) || _Mechant.api_ticket_Expires_in < DateTime.Now)
 			{
 				var _res = new WebClient().DownloadString(String.Format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=wx_card",
@@ -254,7 +271,8 @@ namespace yycms.admin.API
 					DB.SaveChanges();
 				}
 			}
-			#endregion
+
+			#endregion 如果商家api_ticket过期就刷新,网页里用js发券，做签名时需要用到这个
 
 			return _Mechant;
 		}
