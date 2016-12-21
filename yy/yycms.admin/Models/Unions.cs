@@ -100,7 +100,7 @@ namespace yycms.admin.Models
                     _Items.Add(new { ID = 14, Name = "易信", Desc = "" });
                     //_Items.Add(new { ID = 15, Name = "", Desc = "" });
                     //_Items.Add(new { ID = 16, Name = "", Desc = "" });
-                    _Items.Add(new { ID = 17, Name = "玥雅CMS", Desc = "" });
+                    _Items.Add(new { ID = 17, Name = "YYCMS", Desc = "" });
                 }
                 return UnionCollection._Items; 
             }

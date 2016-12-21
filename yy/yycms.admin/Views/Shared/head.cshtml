@@ -1,7 +1,6 @@
 ﻿@using Newtonsoft.Json
 @using yycms.entity
 @using yycms.admin.Models;
-
 @{
     //站点设置
     var SettingItems = ViewBag.SiteSetting as yy_SiteSetting;
@@ -20,7 +19,7 @@
 <div class="navbar navbar-inverse" ng-controller="GlobalCtrl">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/Admin">玥雅CMS <span class="label label-success ylb">预览版</span></a>
+            <a class="navbar-brand" href="/Admin">YY CMS <span class="label label-success ylb">Alpha</span></a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -32,7 +31,7 @@
                     if (_items == null || _items.Count < 1)
                     {
                         <li><a href="@m.url" target="@m.target">@m.name</a></li>
-                    }
+}
 
                     else
                     {
@@ -40,22 +39,21 @@
                             <a href="@m.url" target="@m.target" data-toggle="dropdown" class="dropdown-toggle">
                                 @m.name <b class="caret"></b>
                             </a>
-
                             <ul class="dropdown-menu">
                                 @foreach (var vv in _items)
                                 {
                                     <li><a href="@vv.url" target="@vv.target">@vv.name</a></li>
-                                }
+}
                             </ul>
                         </li>
-                    }
+}
                 }
-               
+
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/spider/news"><i class="ace-icon fa fa-tasks"></i></a></li>
                 <li><a href="/message/index"><i class="ace-icon fa fa-envelope"></i></a></li>
-                <li><a href="/Help">接口</a></li>
+                <li><a href="/API/BannerTypes">接口</a></li>
                 <li><a href="#" ng-click="LoginOut()"><i class="fa fa-power-off"></i></a></li>
             </ul>
         </div>

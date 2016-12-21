@@ -1,0 +1,12 @@
+D:\GitHub\CMS\yy\yycms.entity\bin\Debug\yycms.entity.dll.config
+D:\GitHub\CMS\yy\yycms.entity\bin\Debug\yycms.entity.dll
+D:\GitHub\CMS\yy\yycms.entity\bin\Debug\yycms.entity.pdb
+D:\GitHub\CMS\yy\yycms.entity\bin\Debug\EntityFramework.dll
+D:\GitHub\CMS\yy\yycms.entity\bin\Debug\EntityFramework.SqlServer.dll
+D:\GitHub\CMS\yy\yycms.entity\bin\Debug\EntityFramework.xml
+D:\GitHub\CMS\yy\yycms.entity\bin\Debug\EntityFramework.SqlServer.xml
+D:\GitHub\CMS\yy\yycms.entity\bin\Debug\zh-Hans\EntityFramework.resources.dll
+D:\GitHub\CMS\yy\yycms.entity\bin\Debug\zh-Hans\EntityFramework.SqlServer.resources.dll
+D:\GitHub\CMS\yy\yycms.entity\obj\Debug\yycms.entity.csprojResolveAssemblyReference.cache
+D:\GitHub\CMS\yy\yycms.entity\obj\Debug\yycms.entity.dll
+D:\GitHub\CMS\yy\yycms.entity\obj\Debug\yycms.entity.pdb

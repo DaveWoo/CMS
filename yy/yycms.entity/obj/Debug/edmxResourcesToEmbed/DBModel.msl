@@ -1,0 +1,626 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="DBModelStoreContainer" CdmEntityContainer="DBConnection">
+    <EntitySetMapping Name="yy_Banner">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Banner)">
+        <MappingFragment StoreEntitySet="yy_Banner">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="TypeIDs" ColumnName="TypeIDs" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
+          <ScalarProperty Name="LinkUrl" ColumnName="LinkUrl" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Banner_Type">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Banner_Type)">
+        <MappingFragment StoreEntitySet="yy_Banner_Type">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Image" ColumnName="Image" />
+          <ScalarProperty Name="PID" ColumnName="PID" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Fans_Wechat">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Fans_Wechat)">
+        <MappingFragment StoreEntitySet="yy_Fans_Wechat">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="openid" ColumnName="openid" />
+          <ScalarProperty Name="nickname" ColumnName="nickname" />
+          <ScalarProperty Name="language" ColumnName="language" />
+          <ScalarProperty Name="sex" ColumnName="sex" />
+          <ScalarProperty Name="province" ColumnName="province" />
+          <ScalarProperty Name="city" ColumnName="city" />
+          <ScalarProperty Name="country" ColumnName="country" />
+          <ScalarProperty Name="headimgurl" ColumnName="headimgurl" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="Precision" ColumnName="Precision" />
+          <ScalarProperty Name="remark" ColumnName="remark" />
+          <ScalarProperty Name="unionid" ColumnName="unionid" />
+          <ScalarProperty Name="LOCATIONUpdateTime" ColumnName="LOCATIONUpdateTime" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_FriendLink">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_FriendLink)">
+        <MappingFragment StoreEntitySet="yy_FriendLink">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="KeyWords" ColumnName="KeyWords" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Info" ColumnName="Info" />
+          <ScalarProperty Name="Recommend" ColumnName="Recommend" />
+          <ScalarProperty Name="SiteUrl" ColumnName="SiteUrl" />
+          <ScalarProperty Name="DefaultImg" ColumnName="DefaultImg" />
+          <ScalarProperty Name="Score" ColumnName="Score" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="LookCount" ColumnName="LookCount" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CanReply" ColumnName="CanReply" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Keywords">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Keywords)">
+        <MappingFragment StoreEntitySet="yy_Keywords">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="ApplyType" ColumnName="ApplyType" />
+          <ScalarProperty Name="TypeIDs" ColumnName="TypeIDs" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="ReplaceContent" ColumnName="ReplaceContent" />
+          <ScalarProperty Name="ReplaceCount" ColumnName="ReplaceCount" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Message">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Message)">
+        <MappingFragment StoreEntitySet="yy_Message">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Platform" ColumnName="Platform" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Mail" ColumnName="Mail" />
+          <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+          <ScalarProperty Name="Message" ColumnName="Message" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_News">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_News)">
+        <MappingFragment StoreEntitySet="yy_News">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="TypeIDs" ColumnName="TypeIDs" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="TargetPlatforms" ColumnName="TargetPlatforms" />
+          <ScalarProperty Name="KeyWords" ColumnName="KeyWords" />
+          <ScalarProperty Name="LookCount" ColumnName="LookCount" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="DefaultImg" ColumnName="DefaultImg" />
+          <ScalarProperty Name="ImgList" ColumnName="ImgList" />
+          <ScalarProperty Name="Info" ColumnName="Info" />
+          <ScalarProperty Name="Recommend" ColumnName="Recommend" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CanReply" ColumnName="CanReply" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="WechatMediaID" ColumnName="WechatMediaID" />
+          <ScalarProperty Name="WechatNewsUrl" ColumnName="WechatNewsUrl" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_News_Schedule">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_News_Schedule)">
+        <MappingFragment StoreEntitySet="yy_News_Schedule">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="TypeIDs" ColumnName="TypeIDs" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="KeyWords" ColumnName="KeyWords" />
+          <ScalarProperty Name="LookCount" ColumnName="LookCount" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="DefaultImg" ColumnName="DefaultImg" />
+          <ScalarProperty Name="ImgList" ColumnName="ImgList" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Info" ColumnName="Info" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="Unions" ColumnName="Unions" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="ReleaseDate" ColumnName="ReleaseDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_News_Type">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_News_Type)">
+        <MappingFragment StoreEntitySet="yy_News_Type">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Image" ColumnName="Image" />
+          <ScalarProperty Name="PID" ColumnName="PID" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Page">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Page)">
+        <MappingFragment StoreEntitySet="yy_Page">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="PageName" ColumnName="PageName" />
+          <ScalarProperty Name="BuildType" ColumnName="BuildType" />
+          <ScalarProperty Name="TypeID" ColumnName="TypeID" />
+          <ScalarProperty Name="PageKind" ColumnName="PageKind" />
+          <ScalarProperty Name="SavePath" ColumnName="SavePath" />
+          <ScalarProperty Name="ExtensionName" ColumnName="ExtensionName" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="PageCode" ColumnName="PageCode" />
+          <ScalarProperty Name="CanBuild" ColumnName="CanBuild" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Page_Build_Config">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Page_Build_Config)">
+        <MappingFragment StoreEntitySet="yy_Page_Build_Config">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="PageTypeID" ColumnName="PageTypeID" />
+          <ScalarProperty Name="PageID" ColumnName="PageID" />
+          <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+          <ScalarProperty Name="EndTime" ColumnName="EndTime" />
+          <ScalarProperty Name="BuildType" ColumnName="BuildType" />
+          <ScalarProperty Name="DataTypeIDs" ColumnName="DataTypeIDs" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Page_Build_Task">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Page_Build_Task)">
+        <MappingFragment StoreEntitySet="yy_Page_Build_Task">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="FullName" ColumnName="FullName" />
+          <ScalarProperty Name="TypeID" ColumnName="TypeID" />
+          <ScalarProperty Name="PageID" ColumnName="PageID" />
+          <ScalarProperty Name="BuildEntity" ColumnName="BuildEntity" />
+          <ScalarProperty Name="TotalCount" ColumnName="TotalCount" />
+          <ScalarProperty Name="BuildCount" ColumnName="BuildCount" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="BuildHistory" ColumnName="BuildHistory" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Page_Type">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Page_Type)">
+        <MappingFragment StoreEntitySet="yy_Page_Type">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="IsMaster" ColumnName="IsMaster" />
+          <ScalarProperty Name="SupportPlatform" ColumnName="SupportPlatform" />
+          <ScalarProperty Name="Author" ColumnName="Author" />
+          <ScalarProperty Name="Website" ColumnName="Website" />
+          <ScalarProperty Name="QQ" ColumnName="QQ" />
+          <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Name_En" ColumnName="Name_En" />
+          <ScalarProperty Name="Images" ColumnName="Images" />
+          <ScalarProperty Name="Version" ColumnName="Version" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Permission">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Permission)">
+        <MappingFragment StoreEntitySet="yy_Permission">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="TypeID" ColumnName="TypeID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="MenuName" ColumnName="MenuName" />
+          <ScalarProperty Name="MenuLink" ColumnName="MenuLink" />
+          <ScalarProperty Name="PageName" ColumnName="PageName" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="Icon" ColumnName="Icon" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Permission_Type">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Permission_Type)">
+        <MappingFragment StoreEntitySet="yy_Permission_Type">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Icon" ColumnName="Icon" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Photo">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Photo)">
+        <MappingFragment StoreEntitySet="yy_Photo">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="KeyWords" ColumnName="KeyWords" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="TypeIDs" ColumnName="TypeIDs" />
+          <ScalarProperty Name="Recommend" ColumnName="Recommend" />
+          <ScalarProperty Name="LookCount" ColumnName="LookCount" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="TargetPlatforms" ColumnName="TargetPlatforms" />
+          <ScalarProperty Name="CanReply" ColumnName="CanReply" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Photo_Item">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Photo_Item)">
+        <MappingFragment StoreEntitySet="yy_Photo_Item">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="PhotoID" ColumnName="PhotoID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="ImgUrl" ColumnName="ImgUrl" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Photo_Type">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Photo_Type)">
+        <MappingFragment StoreEntitySet="yy_Photo_Type">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Image" ColumnName="Image" />
+          <ScalarProperty Name="PID" ColumnName="PID" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Platforms">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Platforms)">
+        <MappingFragment StoreEntitySet="yy_Platforms">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Link" ColumnName="Link" />
+          <ScalarProperty Name="Image" ColumnName="Image" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="APPKey" ColumnName="APPKey" />
+          <ScalarProperty Name="APPSecret" ColumnName="APPSecret" />
+          <ScalarProperty Name="APPAdminID" ColumnName="APPAdminID" />
+          <ScalarProperty Name="Access_token" ColumnName="Access_token" />
+          <ScalarProperty Name="Access_token_Expires_in" ColumnName="Access_token_Expires_in" />
+          <ScalarProperty Name="Refresh_token" ColumnName="Refresh_token" />
+          <ScalarProperty Name="APPPayID" ColumnName="APPPayID" />
+          <ScalarProperty Name="APPPayKey" ColumnName="APPPayKey" />
+          <ScalarProperty Name="APPPayCert" ColumnName="APPPayCert" />
+          <ScalarProperty Name="APPID" ColumnName="APPID" />
+          <ScalarProperty Name="APPName" ColumnName="APPName" />
+          <ScalarProperty Name="APPNumber" ColumnName="APPNumber" />
+          <ScalarProperty Name="jsapi_ticket" ColumnName="jsapi_ticket" />
+          <ScalarProperty Name="jsapi_ticket_Expires_in" ColumnName="jsapi_ticket_Expires_in" />
+          <ScalarProperty Name="api_ticket" ColumnName="api_ticket" />
+          <ScalarProperty Name="api_ticket_Expires_in" ColumnName="api_ticket_Expires_in" />
+          <ScalarProperty Name="PlatformConfig" ColumnName="PlatformConfig" />
+          <ScalarProperty Name="RecallUrl" ColumnName="RecallUrl" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="JSSDK" ColumnName="JSSDK" />
+          <ScalarProperty Name="QRCode" ColumnName="QRCode" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Product">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Product)">
+        <MappingFragment StoreEntitySet="yy_Product">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="TypeIDs" ColumnName="TypeIDs" />
+          <ScalarProperty Name="TargetPlatforms" ColumnName="TargetPlatforms" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="KeyWords" ColumnName="KeyWords" />
+          <ScalarProperty Name="Specifications" ColumnName="Specifications" />
+          <ScalarProperty Name="LookCount" ColumnName="LookCount" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="DefaultImg" ColumnName="DefaultImg" />
+          <ScalarProperty Name="ImgList" ColumnName="ImgList" />
+          <ScalarProperty Name="Price" ColumnName="Price" />
+          <ScalarProperty Name="Info" ColumnName="Info" />
+          <ScalarProperty Name="Recommend" ColumnName="Recommend" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CanReply" ColumnName="CanReply" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Product_Type">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Product_Type)">
+        <MappingFragment StoreEntitySet="yy_Product_Type">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Image" ColumnName="Image" />
+          <ScalarProperty Name="PID" ColumnName="PID" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_RedPack">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_RedPack)">
+        <MappingFragment StoreEntitySet="yy_RedPack">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="MerchantID" ColumnName="MerchantID" />
+          <ScalarProperty Name="AgencyID" ColumnName="AgencyID" />
+          <ScalarProperty Name="hb_type" ColumnName="hb_type" />
+          <ScalarProperty Name="nick_name" ColumnName="nick_name" />
+          <ScalarProperty Name="send_name" ColumnName="send_name" />
+          <ScalarProperty Name="current_amount" ColumnName="current_amount" />
+          <ScalarProperty Name="total_amount" ColumnName="total_amount" />
+          <ScalarProperty Name="min_value" ColumnName="min_value" />
+          <ScalarProperty Name="max_value" ColumnName="max_value" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="total_num" ColumnName="total_num" />
+          <ScalarProperty Name="wishing" ColumnName="wishing" />
+          <ScalarProperty Name="act_name" ColumnName="act_name" />
+          <ScalarProperty Name="remark" ColumnName="remark" />
+          <ScalarProperty Name="logo_imgurl" ColumnName="logo_imgurl" />
+          <ScalarProperty Name="share_content" ColumnName="share_content" />
+          <ScalarProperty Name="share_url" ColumnName="share_url" />
+          <ScalarProperty Name="share_imgurl" ColumnName="share_imgurl" />
+          <ScalarProperty Name="GetLimit" ColumnName="GetLimit" />
+          <ScalarProperty Name="GetEmptyLimit" ColumnName="GetEmptyLimit" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_RedPack_Order">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_RedPack_Order)">
+        <MappingFragment StoreEntitySet="yy_RedPack_Order">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="red_packID" ColumnName="red_packID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="MechantID" ColumnName="MechantID" />
+          <ScalarProperty Name="AgencyID" ColumnName="AgencyID" />
+          <ScalarProperty Name="re_openid" ColumnName="re_openid" />
+          <ScalarProperty Name="mch_billno" ColumnName="mch_billno" />
+          <ScalarProperty Name="detail_id" ColumnName="detail_id" />
+          <ScalarProperty Name="red_money" ColumnName="red_money" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_SinglePage">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_SinglePage)">
+        <MappingFragment StoreEntitySet="yy_SinglePage">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="KeyWords" ColumnName="KeyWords" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Info" ColumnName="Info" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="LookCount" ColumnName="LookCount" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_SiteSetting">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_SiteSetting)">
+        <MappingFragment StoreEntitySet="yy_SiteSetting">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="SiteAddress" ColumnName="SiteAddress" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Watermark" ColumnName="Watermark" />
+          <ScalarProperty Name="EnabelWatermark" ColumnName="EnabelWatermark" />
+          <ScalarProperty Name="MailServer" ColumnName="MailServer" />
+          <ScalarProperty Name="MailPort" ColumnName="MailPort" />
+          <ScalarProperty Name="MailAccount" ColumnName="MailAccount" />
+          <ScalarProperty Name="MailPassword" ColumnName="MailPassword" />
+          <ScalarProperty Name="SystemTopBar" ColumnName="SystemTopBar" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Spider">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Spider)">
+        <MappingFragment StoreEntitySet="yy_Spider">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="KeyWords" ColumnName="KeyWords" />
+          <ScalarProperty Name="TypeIDs" ColumnName="TypeIDs" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Quality" ColumnName="Quality" />
+          <ScalarProperty Name="SourceUrls" ColumnName="SourceUrls" />
+          <ScalarProperty Name="RuleConfig" ColumnName="RuleConfig" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="LookCount" ColumnName="LookCount" />
+          <ScalarProperty Name="SpiderMode" ColumnName="SpiderMode" />
+          <ScalarProperty Name="TargetPlatforms" ColumnName="TargetPlatforms" />
+          <ScalarProperty Name="ExecutionInterval" ColumnName="ExecutionInterval" />
+          <ScalarProperty Name="LastStartTime" ColumnName="LastStartTime" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Spider_Log">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Spider_Log)">
+        <MappingFragment StoreEntitySet="yy_Spider_Log">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="SpiderID" ColumnName="SpiderID" />
+          <ScalarProperty Name="TotalUrl" ColumnName="TotalUrl" />
+          <ScalarProperty Name="SuccessUrl" ColumnName="SuccessUrl" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Spider_News">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Spider_News)">
+        <MappingFragment StoreEntitySet="yy_Spider_News">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Identifer" ColumnName="Identifer" />
+          <ScalarProperty Name="SpiderID" ColumnName="SpiderID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="SourceUrl" ColumnName="SourceUrl" />
+          <ScalarProperty Name="DefaultImage" ColumnName="DefaultImage" />
+          <ScalarProperty Name="KeyWords" ColumnName="KeyWords" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Info" ColumnName="Info" />
+          <ScalarProperty Name="IsSync" ColumnName="IsSync" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Statistics">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Statistics)">
+        <MappingFragment StoreEntitySet="yy_Statistics">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="PID" ColumnName="PID" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_SynchronousTask">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_SynchronousTask)">
+        <MappingFragment StoreEntitySet="yy_SynchronousTask">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Platform" ColumnName="Platform" />
+          <ScalarProperty Name="BusinessType" ColumnName="BusinessType" />
+          <ScalarProperty Name="RelationID" ColumnName="RelationID" />
+          <ScalarProperty Name="OperationType" ColumnName="OperationType" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="MaxTry" ColumnName="MaxTry" />
+          <ScalarProperty Name="TriedCount" ColumnName="TriedCount" />
+          <ScalarProperty Name="Data" ColumnName="Data" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="LastUpdateTime" ColumnName="LastUpdateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_SysError">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_SysError)">
+        <MappingFragment StoreEntitySet="yy_SysError">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="LogKey" ColumnName="LogKey" />
+          <ScalarProperty Name="Message" ColumnName="Message" />
+          <ScalarProperty Name="Source" ColumnName="Source" />
+          <ScalarProperty Name="StackTrace" ColumnName="StackTrace" />
+          <ScalarProperty Name="HelpLink" ColumnName="HelpLink" />
+          <ScalarProperty Name="TargetSite" ColumnName="TargetSite" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_User">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_User)">
+        <MappingFragment StoreEntitySet="yy_User">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="HeadImgUrl" ColumnName="HeadImgUrl" />
+          <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+          <ScalarProperty Name="Mail" ColumnName="Mail" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="UserPwd" ColumnName="UserPwd" />
+          <ScalarProperty Name="Gender" ColumnName="Gender" />
+          <ScalarProperty Name="Role" ColumnName="Role" />
+          <ScalarProperty Name="Permission" ColumnName="Permission" />
+          <ScalarProperty Name="CountryID" ColumnName="CountryID" />
+          <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
+          <ScalarProperty Name="DistrictID" ColumnName="DistrictID" />
+          <ScalarProperty Name="CityID" ColumnName="CityID" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="LockFlag" ColumnName="LockFlag" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_User_Type">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_User_Type)">
+        <MappingFragment StoreEntitySet="yy_User_Type">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Permission" ColumnName="Permission" />
+          <ScalarProperty Name="PID" ColumnName="PID" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Video">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Video)">
+        <MappingFragment StoreEntitySet="yy_Video">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="KeyWords" ColumnName="KeyWords" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="TypeIDs" ColumnName="TypeIDs" />
+          <ScalarProperty Name="SourceUrl" ColumnName="SourceUrl" />
+          <ScalarProperty Name="Recommend" ColumnName="Recommend" />
+          <ScalarProperty Name="TargetPlatforms" ColumnName="TargetPlatforms" />
+          <ScalarProperty Name="CanReply" ColumnName="CanReply" />
+          <ScalarProperty Name="LookCount" ColumnName="LookCount" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="yy_Video_Type">
+      <EntityTypeMapping TypeName="IsTypeOf(DBModel.yy_Video_Type)">
+        <MappingFragment StoreEntitySet="yy_Video_Type">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Summary" ColumnName="Summary" />
+          <ScalarProperty Name="Image" ColumnName="Image" />
+          <ScalarProperty Name="PID" ColumnName="PID" />
+          <ScalarProperty Name="IsShow" ColumnName="IsShow" />
+          <ScalarProperty Name="ShowIndex" ColumnName="ShowIndex" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

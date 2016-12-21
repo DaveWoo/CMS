@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("yycms.admin")]
-[assembly: AssemblyDescription("玥雅CMS后台UI")]
+[assembly: AssemblyDescription("YYCMS后台UI")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("上海玥雅信息科技有限公司")]
-[assembly: AssemblyProduct("玥雅CMS")]
-[assembly: AssemblyCopyright("版权所有(C)  2015 上海玥雅信息科技有限公司")]
+[assembly: AssemblyCompany("XXX有限公司")]
+[assembly: AssemblyProduct("YYCMS")]
+[assembly: AssemblyCopyright("版权所有(C)  2015 XXX有限公司")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

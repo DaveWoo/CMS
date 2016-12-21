@@ -296,7 +296,21 @@ namespace yycms.admin.API
                 Path = "/",
                 HttpOnly = false
             };
-            UserCookie.Expires = DateTime.Now.AddDays(-7);
+
+			//var UserCK = Request.Cookies.Get(Const.SessionId);
+			////UserCK = null;
+			//if (UserCK != null && !String.IsNullOrEmpty(UserCK.Value))
+			//{
+			//	try
+			//	{
+			//		User = JsonConvert.DeserializeObject<yy_User>(
+			//			HttpUtility.UrlDecode(UserCK.Value)
+			//			);
+			//	}
+			//	catch { }
+			//}
+
+			UserCookie.Expires = DateTime.Now.AddDays(-7);
             return ResponseMessage(new { Code = 0, Error = "" }, UserCookie);
         }
         #endregion

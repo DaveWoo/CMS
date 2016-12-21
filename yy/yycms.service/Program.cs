@@ -107,7 +107,7 @@ namespace yycms.service
             {
                 config.Service<Engine>();
                 //服务的描述
-                config.SetDescription("玥雅CMS核心服务。");
+                config.SetDescription("YYCMS核心服务。");
                 //服务的显示名称
                 config.SetDisplayName(ServiceName);
                 //服务名称
