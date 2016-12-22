@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("yycms.admin")]
 [assembly: AssemblyDescription("YYCMS后台UI")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("XXX有限公司")]
+[assembly: AssemblyCompany("异想天开")]
 [assembly: AssemblyProduct("YYCMS")]
-[assembly: AssemblyCopyright("版权所有(C)  2015 XXX有限公司")]
+[assembly: AssemblyCopyright("版权所有(C)  2017异想天开")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

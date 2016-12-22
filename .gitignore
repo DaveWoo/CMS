@@ -196,3 +196,7 @@
 /yy/yycms.admin/bin/System.Core.dll
 *.suo
 /yy/.vs/config/applicationhost.config
+/yy/yycms.entity/obj/Debug/TempPE/DBModel.Designer.cs.dll
+/yy/yycms.entity/obj/Debug/TempPE/DBModel.cs.dll
+/yy/yycms.admin/Images/users - Copy.jpg
+/yy/yycms.admin/Images/bg - Copy.jpg

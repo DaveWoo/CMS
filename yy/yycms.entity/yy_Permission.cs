@@ -22,8 +22,6 @@ public partial class yy_Permission
 
     public int TypeID { get; set; }
 
-    public string Name { get; set; }
-
     public string Description { get; set; }
 
     public string MenuName { get; set; }
@@ -39,6 +37,8 @@ public partial class yy_Permission
     public int IsShow { get; set; }
 
     public System.DateTime CreateDate { get; set; }
+
+    public string Title { get; set; }
 
 }
 

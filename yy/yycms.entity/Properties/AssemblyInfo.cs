@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("yycms.entity")]
 [assembly: AssemblyDescription("YYCMS数据实体")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("XX有限公司")]
+[assembly: AssemblyCompany("异想天开")]
 [assembly: AssemblyProduct("YYCMS")]
-[assembly: AssemblyCopyright("Copyright ©  2015 XX有限公司")]
+[assembly: AssemblyCopyright("Copyright ©  2017 异想天开")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
