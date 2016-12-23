@@ -18,6 +18,9 @@
 - 2，下载数据库脚本，创建数据库。
 - 3，修改数据库连接地址：【yycms.admin】webconfig文件，【yycms.service】app.config文件。
 
+### 安装文件
+- 1, MSMQ: https://msdn.microsoft.com/en-us/library/aa967729(v=vs.110).aspx
+
 http://localhost:9130/help/index
 http://localhost:9130/help/api/POST-api-News-Get
 http://localhost:9130/Help/ResourceModel?modelName=NewsListItem

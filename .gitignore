@@ -200,3 +200,9 @@
 /yy/yycms.entity/obj/Debug/TempPE/DBModel.cs.dll
 /yy/yycms.admin/Images/users - Copy.jpg
 /yy/yycms.admin/Images/bg - Copy.jpg
+/yy/yycms.admin/obj/Debug
+*.user
+*.cache
+/yy/yycms.service/bin/Debug/yycms.service.vshost.exe
+/yy/yycms.service/bin/Debug/yycms.service.vshost.exe.config
+/yy/yycms.service/bin/Debug/yycms.service.vshost.exe.manifest

@@ -1,4 +1,11 @@
 ﻿@RenderPage("~/Views/Shared/leftMenu.cshtml")
+@{
+	// Set default value, if there is no id existent
+	if (Html.ViewContext.RouteData.Values["id"] == null)
+	{
+		Html.ViewContext.RouteData.Values["id"] = 1;
+	}
+}
 <div id="content-wrapper" ng-controller="NewsIndexCtrl">
     <div class="container-fluid">
         <div class="row">
