@@ -281,7 +281,7 @@ namespace yycms.service.PlugIn
 
 					#region Content
 
-					String Content = V8Build(View, new { Modal = Modal });
+					String Content = V8Build(View, Modal.FirstOrDefault());
 
 					#endregion Content
 
@@ -636,13 +636,23 @@ namespace yycms.service.PlugIn
 			{
 				engine.Execute(Juicer);
 
-				engine.Script.view = view;
+				engine.Script.view = "hi , id: ${ID}";
+				//	engine.Script.modal = modal;
+				//var modal_script = "modal = " + JsonConvert.SerializeObject(modal);
 
-				var modal_script = "modal = " + JsonConvert.SerializeObject(modal);
+				var modal_script = JsonConvert.SerializeObject(modal);
 
-				engine.Execute(modal_script);
+				//engine.Execute(modal_script);
+				//string tpl = "${subTpl}";
+				//result = engine.Invoke("juicer", engine.Script.view, engine.Script.modal);
+				//	var result1 = engine.Invoke("juicer", engine.Script.view);
+				result = engine.Invoke("juicer", engine.Script.view, modal_script);
+				string tpl = "Hi, {@include subTpl, subData}, End.";
 
-				result = engine.Invoke("juicer", engine.Script.view, engine.Script.modal);
+				string data = "{\"subTpl\":\"I\'m sub content, ${name}\",\"subData\":{\"name\": \"juicer\"}}";
+
+				//engine.Execute(data);
+				var result1 = engine.Invoke("juicer", tpl, data);
 			}
 
 			return result.ToString();

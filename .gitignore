@@ -206,3 +206,9 @@
 /yy/yycms.service/bin/Debug/yycms.service.vshost.exe
 /yy/yycms.service/bin/Debug/yycms.service.vshost.exe.config
 /yy/yycms.service/bin/Debug/yycms.service.vshost.exe.manifest
+/yy/yycms.admin/obj/Release
+/yy/yycms.entity/bin/Release
+/yy/yycms.service/obj/Release
+/yy/yycms.union/bin/Release
+/yy/yycms.union/obj/Release
+/yy/yycms.entity/obj/Release

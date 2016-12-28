@@ -1067,7 +1067,6 @@
     <Content Include="Views\Keywords\Edit.cshtml" />
     <Content Include="Views\Keywords\Index.cshtml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
-    <None Include="Properties\PublishProfiles\yycms.v3.xuyu.pubxml" />
     <Content Include="Views\Message\Add.cshtml" />
     <Content Include="Views\Message\Edit.cshtml" />
     <Content Include="Views\Message\Index.cshtml" />

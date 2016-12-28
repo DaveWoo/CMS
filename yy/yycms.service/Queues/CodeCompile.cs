@@ -29,7 +29,8 @@ namespace yycms.service.Queues
 			{
 				return;
 			}
-
+			var globalHub = ConfigurationManager.AppSettings["GlobalHub"];
+			var compileEvent = ConfigurationManager.AppSettings["CompileEvent"];
 			try
 			{
 				var result = new PageBuilder().BuildPage(body, 0);
@@ -38,11 +39,11 @@ namespace yycms.service.Queues
 
 				result = doc.OuterHtml();
 
-				Signal_Excute("GlobalHub", x => { x.Invoke("CompileEvent", 0, result); });
+				Signal_Excute(globalHub, x => { x.Invoke(compileEvent, 0, result); });
 			}
 			catch (Exception ex)
 			{
-				Signal_Excute("GlobalHub", x => { x.Invoke("CompileEvent", 1, ex.Message); });
+				Signal_Excute(globalHub, x => { x.Invoke(compileEvent, 1, ex.Message); });
 			}
 		}
 
@@ -55,7 +56,7 @@ namespace yycms.service.Queues
 		/// <param name="HubAction"></param>
 		public void Signal_Excute(String HubName, Action<IHubProxy> HubAction)
 		{
-			var HubUrl = ConfigurationManager.AppSettings["AdminSiteUrl"] + "/signalr";
+			var HubUrl = string.Format("{0}/{1}", ConfigurationManager.AppSettings["AdminSiteUrl"], ConfigurationManager.AppSettings["Signal"]);
 
 			var Connection = new HubConnection(HubUrl);
 

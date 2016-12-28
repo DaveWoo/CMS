@@ -46,13 +46,16 @@
 									<ul class="submenu">
 										@foreach (var v in SubItems)
 										{
+											//var path2 = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + ":" + Request.Url.Port +v.PageName;
+											var path =  v.PageName;
+
 											if (v.IsShow == 0)
 											{
 												continue;
 											}
 											<li>
-												<a href="@v.PageName" ng-class="{'gr':LaftBar_PageID==@v.ID}">
-													@if (v.Icon == null|| v.Icon == "")
+												<a href="@path" ng-class="{'gr':LaftBar_PageID==@v.ID}">
+													@if (v.Icon == null || v.Icon == "")
 													{
 														<i class="fa fa-circle-o"></i>
 													}
