@@ -192,7 +192,7 @@
 /yy/yycms.admin/bin/APIDocument.xml
 /yy/yycms.admin/bin/Antlr3.Runtime.pdb
 /yy/yycms.admin/bin/Antlr3.Runtime.dll
-/yy/packages/*
+/yy/src/packages/*
 /yy/yycms.admin/bin/System.Core.dll
 *.suo
 /yy/.vs/config/applicationhost.config
@@ -212,3 +212,7 @@
 /yy/yycms.union/bin/Release
 /yy/yycms.union/obj/Release
 /yy/yycms.entity/obj/Release
+/yy/src/.vs/config
+/yy/src/yycms.admin/bin
+/yy/src/yycms.admin/obj/Debug
+/yy/src/yycms.admin/obj/Release/CSAutoParameterize
