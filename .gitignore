@@ -216,3 +216,9 @@
 /yy/src/yycms.admin/bin
 /yy/src/yycms.admin/obj/Debug
 /yy/src/yycms.admin/obj/Release/CSAutoParameterize
+/yy/src/yycms.entity/bin/Debug
+/yy/src/yycms.entity/obj/Debug
+/yy/src/yycms.service/bin/Debug
+/yy/src/yycms.union/bin/Debug
+/yy/src/yycms.service/obj/Debug
+/yy/src/yycms.union/obj/Debug

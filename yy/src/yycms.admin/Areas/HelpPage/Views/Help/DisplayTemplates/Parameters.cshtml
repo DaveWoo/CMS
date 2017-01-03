@@ -10,6 +10,7 @@
         <thead>
             <tr>
                 <th>Property</th>
+				@*<th>Value</th>*@
                 <th>Summary</th>
                 <th>Type</th>
                 <th>Note</th>
@@ -21,6 +22,7 @@
                 ModelDescription modelDescription = parameter.TypeDescription;
                 <tr>
                     <td class="parameter-name">@parameter.Name</td>
+					@*<td class="parameter-name">@Html.TextArea("Value", parameter.Value, new { @class = "form-control" })  </td>*@					
                     <td class="parameter-documentation">
                         <p>@parameter.Documentation</p>
                     </td>

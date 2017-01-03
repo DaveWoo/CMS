@@ -673,11 +673,31 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserID" Type="Int64" Nullable="false" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" >
+            <Documentation>
+              <Summary>ID</Summary>
+              <LongDescription>ID</LongDescription>
+            </Documentation>
+          </Property>
+          <Property Name="UserID" Type="Int64" Nullable="false" >
+            <Documentation>
+              <Summary>UserID</Summary>
+              <LongDescription>UserID</LongDescription>
+            </Documentation>
+          </Property>
           <Property Name="TypeIDs" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Summary" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" >
+            <Documentation>
+              <Summary>Title</Summary>
+              <LongDescription>Title</LongDescription>
+            </Documentation>
+          </Property>
+          <Property Name="Summary" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" >
+            <Documentation>
+              <Summary>Summary</Summary>
+              <LongDescription>Summary</LongDescription>
+            </Documentation>
+          </Property>
           <Property Name="ImageUrl" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="LinkUrl" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="IsShow" Type="Int32" Nullable="false" />

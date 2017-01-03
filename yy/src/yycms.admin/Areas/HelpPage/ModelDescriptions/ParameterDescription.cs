@@ -16,6 +16,8 @@ namespace yycms.admin.Areas.HelpPage.ModelDescriptions
 
         public string Name { get; set; }
 
-        public ModelDescription TypeDescription { get; set; }
+		public string Value { get; set; }
+
+		public ModelDescription TypeDescription { get; set; }
     }
 }
