@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Web;
 using System.Web.Http;
@@ -50,35 +51,19 @@ namespace yycms.admin.Areas.HelpPage.Controllers
 					{
 						try
 						{
-							string nameID = string.Empty;
-							if (apiModel.ApiDescription.RelativePath.EndsWith("{id}"))
+							string relativePath = apiModel.ApiDescription.RelativePath;
+							string data = string.Empty;
+							if (relativePath.EndsWith("{id}"))
 							{
-								nameID = apiModel.ApiDescription.RelativePath.Replace("{id}", "");
-								nameID += jsonRequestValue;
+								relativePath = apiModel.ApiDescription.RelativePath.Replace("{id}", "");
+								relativePath += jsonRequestValue;
 							}
-							string path = string.Format("{0}://{1}/{2}", Request.Url.Scheme, Request.Url.Authority, nameID);
-							var cookies = System.Web.HttpContext.Current.Request.Cookies["yycms"];
-							var request = (HttpWebRequest)HttpWebRequest.Create(path);
-							//	request.Credentials = new NetworkCredential("admin", "123456", path);
-							var sds = Request.Cookies.Get(Const.SessionId);
-							Cookie cookie = ToCookie(sds, request.RequestUri.Host);
-							CookieCollection cookieCollection = new CookieCollection();
-							request.CookieContainer = new CookieContainer();
-							//request.CookieContainer.Add()
-							// Set some reasonable limits on resources used by this request
-							request.MaximumAutomaticRedirections = 4;
-							request.MaximumResponseHeadersLength = 4;
-							request.Method = "GET";
-							request.CookieContainer = new CookieContainer();
-							request.CookieContainer.Add(cookie);
-
-							var httpResponse = (HttpWebResponse)request.GetResponse();
-
-							using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+							else
 							{
-								string json = JsonHelper.FormatJson(streamReader.ReadToEnd());
-								apiModel.ResponseMessage = json;
+								data = jsonRequestValue;
 							}
+							string path = string.Format("{0}://{1}/{2}", Request.Url.Scheme, Request.Url.Authority, relativePath);
+							apiModel.ResponseMessage = GetResponse(path, apiModel.ApiDescription.HttpMethod, data);
 						}
 						catch (Exception ex)
 						{
@@ -90,6 +75,47 @@ namespace yycms.admin.Areas.HelpPage.Controllers
 			}
 
 			return View(ErrorViewName);
+		}
+
+		private string GetResponse(string path, HttpMethod method, string data)
+		{
+			Encoding encoding = Encoding.GetEncoding("gb2312");
+			byte[] bytesToPost = encoding.GetBytes(data);
+
+			string response = string.Empty;
+			var request = (HttpWebRequest)HttpWebRequest.Create(path);
+			var session = Request.Cookies.Get(Const.SessionId);
+			Cookie cookie = ToCookie(session, request.RequestUri.Host);
+			CookieCollection cookieCollection = new CookieCollection();
+			request.CookieContainer = new CookieContainer();
+			// Set some reasonable limits on resources used by this request
+			request.MaximumAutomaticRedirections = 4;
+			request.MaximumResponseHeadersLength = 4;
+			request.Method = method.ToString();
+			request.CookieContainer = new CookieContainer();
+			request.CookieContainer.Add(cookie);
+
+			#region  post content  
+			if (method == HttpMethod.Post)
+			{
+				request.ContentType = "application/json";
+				request.MediaType = "application/json";
+				request.Accept = "application/json";
+				request.ContentLength = data.Length;
+				Stream requestStream = request.GetRequestStream();
+				requestStream.Write(bytesToPost, 0, data.Length);
+				requestStream.Close();
+			}
+			#endregion
+
+			var httpResponse = (HttpWebResponse)request.GetResponse();
+
+			using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+			{
+				response = JsonHelper.FormatJson(streamReader.ReadToEnd());
+			}
+
+			return response;
 		}
 
 		public ActionResult ResourceModel(string modelName)

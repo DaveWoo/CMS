@@ -3,89 +3,107 @@
 @using System.Web.Http.Description
 @using yycms.admin.Areas.HelpPage
 @using yycms.admin.Areas.HelpPage.Models
+@using System.Net.Http;
 @model IGrouping<HttpControllerDescriptor, ApiDescription>
-@{
+	@{
 	var controllerDocumentation = ViewBag.DocumentationProvider != null ?
-		ViewBag.DocumentationProvider.GetDocumentation(Model.Key) :
-		null;
+	ViewBag.DocumentationProvider.GetDocumentation(Model.Key) :
+	null;
 	var i = 0;
-}
-<style type="text/css">
-	.panel-heading {
-		padding: 12px 7px;
 	}
+	<style type="text/css">
+		.panel-heading {
+			padding: 12px 7px;
+		}
 
-	.panel-title {
-		/*font-family: Î¢ÈíÑÅºÚ;*/
-	}
+		.panel-title {
+			/*font-family: Î¢ÈíÑÅºÚ;*/
+		}
 
-	.table > thead:first-child > tr:first-child > th {
-		font-weight: normal;
-		/*font-family: Î¢ÈíÑÅºÚ;*/
-	}
+		.table > thead:first-child > tr:first-child > th {
+			font-weight: normal;
+			/*font-family: Î¢ÈíÑÅºÚ;*/
+		}
 
-	.table > thead > tr > th {
-		border-bottom: 1px solid #ddd;
-	}
-</style>
-<div class="panel-group" id="@Model.Key.ControllerName" role="tablist" aria-multiselectable="true">
-	<div class="panel panel-default">
-		<div class="panel-heading" role="tab" id="@(Model.Key.ControllerName)HD">
-			<h4 class="panel-title">
-				<a role="button" data-toggle="collapse" data-parent="#@(Model.Key.ControllerName)HD" href="#@(Model.Key.ControllerName)BD" aria-expanded="false" aria-controls="@(Model.Key.ControllerName)BD">
-					@if (!String.IsNullOrEmpty(controllerDocumentation))
-					{
-						@controllerDocumentation
-					}
-					- @Model.Key.ControllerName
-					<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
-				</a>
-			</h4>
-		</div>
-		<div id="@(Model.Key.ControllerName)BD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="@(Model.Key.ControllerName)">
-			<div class="panel-body">
-				<table class="table table-bordered table-striped table-hover animated helpStep2">
-					<thead>
-						<tr>
-							<th width="50px">编号</th>
-							<th width="80px">方式</th>
-							<th>接口名称</th>
-							<th>描述</th>
-							<th>操作</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var api in Model)
+		.table > thead > tr > th {
+			border-bottom: 1px solid #ddd;
+		}
+	</style>
+	<div class="panel-group" id="@Model.Key.ControllerName" role="tablist" aria-multiselectable="true">
+		<div class="panel panel-default">
+			<div class="panel-heading" role="tab" id="@(Model.Key.ControllerName)HD">
+				<h4 class="panel-title">
+					<a role="button" data-toggle="collapse" data-parent="#@(Model.Key.ControllerName)HD" href="#@(Model.Key.ControllerName)BD" aria-expanded="false" aria-controls="@(Model.Key.ControllerName)BD">
+						@if (!String.IsNullOrEmpty(controllerDocumentation))
 						{
+						@controllerDocumentation
+						}
+						- @Model.Key.ControllerName
+						<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
+					</a>
+				</h4>
+			</div>
+			<div id="@(Model.Key.ControllerName)BD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="@(Model.Key.ControllerName)">
+				<div class="panel-body">
+					<table class="table table-bordered table-striped table-hover animated helpStep2">
+						<thead>
+							<tr>
+								<th width="50px">编号</th>
+								<th width="80px">方式</th>
+								<th>接口名称</th>
+								<th>描述</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var api in Model)
+							{
 							<tr>
 								<td>@(++i)</td>
-								<td>@api.HttpMethod.Method</td>
+								<td>
+									@if(api.HttpMethod.Method=="GET")
+									{
+									<span class="label label-success">@api.HttpMethod.Method</span>
+									}
+									@if(api.HttpMethod.Method=="POST")
+									{
+									<span class="label label-info">@api.HttpMethod.Method</span>
+									}
+									@if(api.HttpMethod.Method=="PUT")
+									{
+									<span class="label label-info">@api.HttpMethod.Method</span>
+									}
+									@if(api.HttpMethod.Method=="DELETE")
+									{
+									<span class="label label-danger">@api.HttpMethod.Method</span>
+									}
+								</td>
 								<td title="@api.RelativePath">
 									@api.RelativePath
 								</td>
 								<td class="api-documentation">
 									@if (api.Documentation != null)
 									{
-										<p>@api.Documentation</p>
+									<p>@api.Documentation</p>
 									}
 									else
 									{
-										<p>Documentation2</p>
+									<p>Documentation2</p>
 									}
 								</td>
 								<td>
-									<a href="@Url.Action("Api", "Help", new { apiId = api.GetFriendlyId() })"><i class="icon_book_alt"></i></a>
+									<a href="@Url.Action(" Api", "Help" , new { apiId=api.GetFriendlyId() })"><i class="icon_book_alt"></i></a>
 								</td>
 							</tr>
-						}
-					</tbody>
-				</table>
+							}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
-<script type="text/javascript">
+	<script type="text/javascript">
 	function toggleChevron(e) {
 		$(e.target)
 			.prev('.panel-heading')
@@ -94,4 +112,4 @@
 	}
 	$(@Model.Key.ControllerName).on('hidden.bs.collapse', toggleChevron);
 	$(@Model.Key.ControllerName).on('shown.bs.collapse', toggleChevron);
-</script>
+	</script>
