@@ -185,7 +185,7 @@
                                         ng-model="User.CityID"
                                         class="form-control"
                                         required>
-                                    <option ng-repeat="d in Citys"
+                                    <option ng-repeat="d in Cities"
                                             ng-if="d.ParentID == User.ProvinceID"
                                             value="{{d.ID}}">
                                         {{d.Name}}
@@ -449,7 +449,7 @@
     angular.module("app").controller("UserEditCtrl", function ($location, $scope, API_User,API_Platform)
     {
         $scope.Provinces = Provinces;
-        $scope.Citys = Citys;
+        $scope.Cities = Cities;
         $scope.Districts = Districts;
 
         $scope.Genders = [{ID:0,Name:'女士'},{ID:1,Name:'男士'}];

@@ -107,7 +107,6 @@ namespace yycms.admin.API
 			{
 				result.Headers.AddCookies(new CookieHeaderValue[] { Cookies });
 			}
-
 			return result;
 		}
 

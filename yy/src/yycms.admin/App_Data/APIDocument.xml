@@ -2974,6 +2974,11 @@
             Gets the error messages associated with this model.
             </summary>
         </member>
+        <member name="P:yycms.admin.Areas.HelpPage.Models.HelpPageApiModel.ResponseMessage">
+            <summary>
+            Gets the response messages associated with this model.
+            </summary>
+        </member>
         <member name="T:yycms.admin.Areas.HelpPage.HelpPageSampleGenerator">
             <summary>
             This class will generate the samples for the help page.

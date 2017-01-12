@@ -23,6 +23,7 @@
 		border-bottom: 1px solid #ddd;
 	}
 </style>
+
 <div class="bs-callout bs-callout-success">
 	<h3>
 		<span class="label label-success" style="font-size:14px;">@description.HttpMethod.Method</span>
@@ -38,15 +39,19 @@
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="ParametersHD">
 				<h4 class="panel-title">
-					<a role="button" data-toggle="collapse" data-parent="#ParametersHD" href="#ParametersBD" aria-expanded="false" aria-controls="ParametersBD">
+					<a role="button" data-toggle="collapse" data-parent="#Parameters" href="#ParametersBD" aria-expanded="false" aria-controls="ParametersBD">
 						Uri Parameters
+						<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
 					</a>
 				</h4>
 			</div>
 			<div id="ParametersBD" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Parameters">
-				<div class="panel-body">
+				<div class="panel-body">				
 					@Html.DisplayFor(m => m.UriParameters, "Parameters")
-					<input type="submit" value="Send" class="btn btn-default" />
+					@Html.TextArea("jsonRequestValue", null, new { @class = "form-control", @rows = 10 })
+					<input type="reset" value="Reset" class="btn btn-info" />
+					<input type="submit" value="Send" class="btn btn-info" />
+					@Html.TextAreaFor(m => m.ResponseMessage, new { @class = "form-control", @rows = 10 })
 				</div>
 				<div class="col-md-offset-2 col-md-10">
 
@@ -54,65 +59,69 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="panel-group" id="Samples" role="tablist" aria-multiselectable="true">
-		<div class="panel panel-default">
-			<div class="panel-heading" role="tab" id="SamplesHD">
-				<h4 class="panel-title">
-					<a role="button" data-toggle="collapse" data-parent="#SamplesHD" href="#SamplesBD" aria-expanded="false" aria-controls="SamplesBD">
-						Sample Requests
-					</a>
-				</h4>
-			</div>
-			<div id="SamplesBD" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Samples">
-				<div class="panel-body">
-					@if (Model.SampleRequests.Count > 0)
-				{
-						@Html.DisplayFor(m => m.SampleRequests, "Samples")
-				}
+	if (Model.SampleRequests.Count > 0)
+	{
+		<div class="panel-group" id="Samples" role="tablist" aria-multiselectable="true">
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="SamplesHD">
+					<h4 class="panel-title">
+						<a role="button" data-toggle="collapse" data-parent="#SamplesHD" href="#SamplesBD" aria-expanded="false" aria-controls="SamplesBD">
+							Sample Requests
+							<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
+						</a>
+					</h4>
+				</div>
+				<div id="SamplesBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="Samples">
+					<div class="panel-body">
+						@if (Model.SampleRequests.Count > 0)
+						{
+							@Html.DisplayFor(m => m.SampleRequests, "Samples")
+						}
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="panel-group" id="BizParameters" role="tablist" aria-multiselectable="true">
-		<div class="panel panel-default">
-			<div class="panel-heading" role="tab" id="BizParametersHD">
-				<h4 class="panel-title">
-					<a role="button" data-toggle="collapse" data-parent="#BizParametersHD" href="#BizParametersBD" aria-expanded="false" aria-controls="BizParametersBD">
-						Request	Model Type
-					</a>
-					<span style="float:right;">@Html.DisplayFor(m => m.RequestModelDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.RequestModelDescription })</span>
-				</h4>
-			</div>
-			<div id="BizParametersBD" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="BizParameters">
-				<div class="panel-body">
-					@if (!String.IsNullOrEmpty(Model.RequestDocumentation))
-				{
-						<div class="alert alert-warning">@Model.RequestDocumentation</div>
-				}
-					@if (Model.RequestModelDescription != null)
-				{
-					if (Model.RequestBodyParameters != null)
-					{
-							@Html.DisplayFor(m => m.RequestBodyParameters, "Parameters")
-					}
-				}
-				else
-				{
-						<p>Biz Parameters BD</p>
-				}
+		<div class="panel-group" id="BizParameters" role="tablist" aria-multiselectable="true">
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="BizParametersHD">
+					<h4 class="panel-title">
+						<a role="button" data-toggle="collapse" data-parent="#BizParametersHD" href="#BizParametersBD" aria-expanded="false" aria-controls="BizParametersBD">
+							Request	Model Type
+							<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
+						</a>
+						<span>@Html.DisplayFor(m => m.RequestModelDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.RequestModelDescription })</span>
+					</h4>
+				</div>
+				<div id="BizParametersBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="BizParameters">
+					<div class="panel-body">
+						@if (!String.IsNullOrEmpty(Model.RequestDocumentation))
+						{
+							<div class="alert alert-warning">@Model.RequestDocumentation</div>
+						}
+						@if (Model.RequestModelDescription != null)
+						{
+							if (Model.RequestBodyParameters != null)
+							{
+								@Html.DisplayFor(m => m.RequestBodyParameters, "Parameters")
+							}
+						}
+						else
+						{
+							<p>Biz Parameters BD</p>
+						}
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	}
 
 	<div class="panel-group" id="Samples2" role="tablist" aria-multiselectable="true">
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="Samples2HD">
 				<h4 class="panel-title">
 					<a role="button" data-toggle="collapse" data-parent="#Samples2HD" href="#Samples2BD" aria-expanded="false" aria-controls="Samples2BD">
-						Sample Responses
+						Sample Responses<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
 					</a>
 				</h4>
 			</div>
@@ -132,9 +141,9 @@
 			<div class="panel-heading" role="tab" id="ModelDescriptionLinkHD">
 				<h4 class="panel-title">
 					<a role="button" data-toggle="collapse" data-parent="#ModelDescriptionLinkHD" href="#ModelDescriptionLinkBD" aria-expanded="false" aria-controls="ModelDescriptionLinkBD">
-						Responses Entity Description
+						Responses Entity Description<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
 					</a>
-					<span style="float:right;">
+					<span>
 						@if (Model.ResourceDescription != null)
 						{
 							@Html.DisplayFor(m => m.ResourceDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.ResourceDescription })
@@ -142,7 +151,7 @@
 					</span>
 				</h4>
 			</div>
-			<div id="ModelDescriptionLinkBD" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="ModelDescriptionLink">
+			<div id="ModelDescriptionLinkBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="ModelDescriptionLink">
 				<div class="panel-body">
 					@if (!String.IsNullOrEmpty(description.ResponseDescription.Documentation))
 				{
@@ -167,3 +176,26 @@
 		</div>
 	</div>
 }
+
+<script type="text/javascript">
+	function toggleChevron(e) {
+		$(e.target)
+			.prev('.panel-heading')
+			.find("i.indicator")
+			.toggleClass('glyphicon-chevron-down glyphicon-chevron-right');
+	}
+	$('#Parameters').on('hidden.bs.collapse', toggleChevron);
+	$('#Parameters').on('shown.bs.collapse', toggleChevron);
+
+	$('#Samples').on('hidden.bs.collapse', toggleChevron);
+	$('#Samples').on('shown.bs.collapse', toggleChevron);
+
+	$('#BizParameters').on('hidden.bs.collapse', toggleChevron);
+	$('#BizParameters').on('shown.bs.collapse', toggleChevron);
+
+	$('#Samples2').on('hidden.bs.collapse', toggleChevron);
+	$('#Samples2').on('shown.bs.collapse', toggleChevron);
+
+	$('#ModelDescriptionLink').on('hidden.bs.collapse', toggleChevron);
+	$('#ModelDescriptionLink').on('shown.bs.collapse', toggleChevron);
+</script>

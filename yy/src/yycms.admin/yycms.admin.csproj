@@ -286,6 +286,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="JsonHelper.cs" />
     <Compile Include="Models\WechatModel.cs" />
     <Compile Include="Models\yy_Page_Type2.cs" />
     <Compile Include="Models\Const.cs" />

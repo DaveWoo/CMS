@@ -133,7 +133,7 @@ a, a:hover {
 	width: 150px;
 	padding-top: 10px;
 	position: relative;
-	margin: 200px auto 0;
+	margin:  auto;
 }
 
 #rond {
@@ -202,7 +202,7 @@ a, a:hover {
 	top: 20px;
 	left: 0;
 	-webkit-animation: bounce 2s infinite cubic-bezier(0.4, 0, 1, 1);
-	animation: bounce 2s infinite cubic-bezier(0.4, 0, 1, 1);
+	animation: bounce 3s infinite cubic-bezier(0.4, 0, 1, 1);
 }
 
 .double-bounce2 {

@@ -185,7 +185,7 @@
                             class="form-control"
                             required>
                         <option ng-selected="d.ID==User.CityID"
-                                ng-repeat="d in Citys"
+                                ng-repeat="d in Cities"
                                 ng-if="d.ParentID == User.ProvinceID"
                                 value="{{d.ID}}">
                             {{d.Name}}
@@ -259,7 +259,7 @@
     angular.module("app").controller("UserAddCtrl", function ($location, $scope, API_User)
     {
         $scope.Provinces = Provinces;
-        $scope.Citys = Citys;
+        $scope.Cities = Cities;
         $scope.Districts = Districts;
         $scope.Genders = [{ID:0,Name:'女士'},{ID:1,Name:'男士'}];
         $scope.LockFlags = [{ID:1,Name:'正常'},{ID:0,Name:'冻结'}];

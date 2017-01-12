@@ -311,7 +311,12 @@ namespace yycms.admin.API
 			{
 				UserCookie.Expires = DateTime.Now.AddDays(7);
 			}
-
+			System.Web.HttpCookie newcookie = new HttpCookie("yycms");
+			newcookie.Values["username"] = LoginName;
+			newcookie.Values["password"] = Password;
+			newcookie.Expires = DateTime.Now.AddDays(1);
+			HttpContext.Current.Response.Cookies.Add(newcookie);
+		
 			return ResponseMessage(new { Code = 0, Error = "" }, UserCookie);
 		}
 
