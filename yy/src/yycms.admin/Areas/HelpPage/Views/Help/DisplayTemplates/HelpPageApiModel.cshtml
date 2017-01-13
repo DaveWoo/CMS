@@ -48,10 +48,12 @@
 			<div id="ParametersBD" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Parameters">
 				<div class="panel-body">				
 					@Html.DisplayFor(m => m.UriParameters, "Parameters")
-					@Html.TextArea("jsonRequestValue", null, new { @class = "form-control", @rows = 10 })
-					<input type="reset" value="Reset" class="btn btn-info" />
+					@Html.TextArea("jsonRequestValue", null, new { @class = "form-control", @rows = 10, id= "requestTextarea" })
 					<input type="submit" value="Send" class="btn btn-info" />
-					@Html.TextAreaFor(m => m.ResponseMessage, new { @class = "form-control", @rows = 10 })
+					<input id="copyRequest" type="button" value="Copy Request" class="btn btn-info" />
+					<input id="copyResponse" type="button" value="Copy Response" class="btn btn-info" />
+					<input type="reset" value="Reset" class="btn btn-info" />					
+					@Html.TextAreaFor(m => m.ResponseMessage, new { @class = "form-control", @rows = 10 ,id= "responseTextarea" })
 				</div>
 				<div class="col-md-offset-2 col-md-10">
 
@@ -198,4 +200,13 @@
 
 	$('#ModelDescriptionLink').on('hidden.bs.collapse', toggleChevron);
 	$('#ModelDescriptionLink').on('shown.bs.collapse', toggleChevron);
+
+	$("#copyRequest").click(function () {
+		$("#requestTextarea").select();
+		document.execCommand('copy');
+	});
+	$("#copyResponse").click(function () {
+		$("#responseTextarea").select();
+		document.execCommand('copy');
+	});
 </script>
