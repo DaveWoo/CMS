@@ -27,130 +27,142 @@ namespace yycms.admin.API
 		/// </summary>
 		/// <returns></returns>
 		[HttpPost]
+		[System.Web.Http.Route("api/User/Get"), ResponseType(typeof(List<yy_User>))]
 		public async Task<ResponseData<yy_User>> Get(RequestEntity value)
+		//public async Task<IHttpActionResult> Get(RequestEntity value)
 		{
-			//查询的表名称
-			Type Table = typeof(yy_User);
-
-			var FormData = await Request.Content.ReadAsAsync<Dictionary<String, String>>();
-
-			#region where condition
-
-			//筛选条件
-			var Where = String.Empty;
-
-			var WhereBuild = new List<string>();
-
-			#region 用户标题
-
-			if (!String.IsNullOrEmpty(value.Title))
+			try
 			{
-				WhereBuild.Add("Title like '%" + value.Title + "%'");
-			}
+				// 查询的表名称
+				Type Table = typeof(yy_User);
 
-			#endregion 用户标题
+				var FormData = await Request.Content.ReadAsAsync<Dictionary<String, String>>();
 
-			#region 用户分类
+				#region where condition
 
-			if (value.TypeID > 0)
-			{
-				WhereBuild.Add("TypeIDs like '%," + value.TypeID + ",%'");
-			}
+				//筛选条件
+				var Where = String.Empty;
 
-			#endregion 用户分类
+				var WhereBuild = new List<string>();
 
-			#region 根据时间过滤
+				#region 用户标题
 
-			#region 大于等于 开始时间 && 小于等于 结束时间
-
-			if (!String.IsNullOrEmpty(value.StartTime) && !String.IsNullOrEmpty(value.EndTime))
-			{
-				DateTime st, et;
-
-				if (DateTime.TryParse(value.StartTime, out st) && DateTime.TryParse(value.EndTime, out et))
+				if (!String.IsNullOrEmpty(value.Title))
 				{
-					WhereBuild.Add(" CreateDate >= '" + st.ToString("yyyy-MM-dd") + " 00:00:00' AND CreateDate <= '" + et.ToString("yyyy-MM-dd") + " 23:59:59'");
+					WhereBuild.Add("Title like '%" + value.Title + "%'");
 				}
-			}
 
-			#endregion 大于等于 开始时间 && 小于等于 结束时间
+				#endregion 用户标题
 
-			#region 大于等于开始时间
+				#region 用户分类
 
-			else if (!String.IsNullOrEmpty(value.StartTime))
-			{
-				DateTime st;
-				if (DateTime.TryParse(value.StartTime, out st))
+				if (value.TypeID > 0)
 				{
-					WhereBuild.Add(" CreateDate >= '" + st.ToString("yyyy-MM-dd") + " 00:00:00'");
+					WhereBuild.Add("TypeIDs like '%," + value.TypeID + ",%'");
 				}
-			}
 
-			#endregion 大于等于开始时间
+				#endregion 用户分类
 
-			#region 小于等于结束时间
+				#region 根据时间过滤
 
-			else if (!String.IsNullOrEmpty(value.EndTime))
-			{
-				DateTime et;
-				if (DateTime.TryParse(value.EndTime, out et))
+				#region 大于等于 开始时间 && 小于等于 结束时间
+
+				if (!String.IsNullOrEmpty(value.StartTime) && !String.IsNullOrEmpty(value.EndTime))
 				{
-					WhereBuild.Add(" CreateDate <= '" + et.ToString("yyyy-MM-dd") + " 23:59:59'");
+					DateTime st, et;
+
+					if (DateTime.TryParse(value.StartTime, out st) && DateTime.TryParse(value.EndTime, out et))
+					{
+						WhereBuild.Add(" CreateDate >= '" + st.ToString("yyyy-MM-dd") + " 00:00:00' AND CreateDate <= '" + et.ToString("yyyy-MM-dd") + " 23:59:59'");
+					}
 				}
-			}
 
-			#endregion 小于等于结束时间
+				#endregion 大于等于 开始时间 && 小于等于 结束时间
 
-			#endregion 根据时间过滤
+				#region 大于等于开始时间
 
-			if (WhereBuild.Count > 0)
-			{
-				Where = " WHERE " + String.Join(" AND ", WhereBuild);
-			}
+				else if (!String.IsNullOrEmpty(value.StartTime))
+				{
+					DateTime st;
+					if (DateTime.TryParse(value.StartTime, out st))
+					{
+						WhereBuild.Add(" CreateDate >= '" + st.ToString("yyyy-MM-dd") + " 00:00:00'");
+					}
+				}
 
-			#endregion where condition
+				#endregion 大于等于开始时间
 
-			#region OrderBy
+				#region 小于等于结束时间
 
-			//排序规则
-			String OrderBy = " ID DESC ";
-			if (!String.IsNullOrEmpty(value.OrderBy))
-			{
-				OrderBy = " " + value.OrderBy + " " + (value.IsDesc ? "DESC" : "ASC");
-			}
+				else if (!String.IsNullOrEmpty(value.EndTime))
+				{
+					DateTime et;
+					if (DateTime.TryParse(value.EndTime, out et))
+					{
+						WhereBuild.Add(" CreateDate <= '" + et.ToString("yyyy-MM-dd") + " 23:59:59'");
+					}
+				}
 
-			#endregion OrderBy
+				#endregion 小于等于结束时间
 
-			#region 拼接sql语句
+				#endregion 根据时间过滤
 
-			String colsStr = " * ";
+				if (WhereBuild.Count > 0)
+				{
+					Where = " WHERE " + String.Join(" AND ", WhereBuild);
+				}
 
-			#region 查询数据
+				#endregion where condition
 
-			String QuertCMD = String.Format(@"SELECT TOP {0} * FROM (
+				#region OrderBy
+
+				//排序规则
+				String OrderBy = " ID DESC ";
+				if (!String.IsNullOrEmpty(value.OrderBy))
+				{
+					OrderBy = " " + value.OrderBy + " " + (value.IsDesc ? "DESC" : "ASC");
+				}
+
+				#endregion OrderBy
+
+				#region 拼接sql语句
+
+				String colsStr = " * ";
+
+				#region 查询数据
+
+				String QuertCMD = String.Format(@"SELECT TOP {0} * FROM (
                                 SELECT ROW_NUMBER() OVER (ORDER BY {4}) AS RowNumber," + colsStr + @" FROM {2} WITH(NOLOCK) {3}
                                 ) A WHERE RowNumber > {0} * ({1}-1)", value.PageSize, value.PageIndex + 1, "[" + Table.Name + "]", Where, OrderBy);
 
-			#endregion 查询数据
+				#endregion 查询数据
 
-			#region 查询总数
+				#region 查询总数
 
-			String DataCountCMD = @"SELECT COUNT(1) FROM [" + Table.Name + "] WITH(NOLOCK) " + Where;
+				String DataCountCMD = @"SELECT COUNT(1) FROM [" + Table.Name + "] WITH(NOLOCK) " + Where;
 
-			#endregion 查询总数
+				#endregion 查询总数
 
-			#endregion 拼接sql语句
+				#endregion 拼接sql语句
 
-			#region 执行查询并返回数据
+				#region 执行查询并返回数据
 
-			var DataCount = DB.Database.SqlQuery<int>(DataCountCMD).FirstOrDefault();
-			return new ResponseData<yy_User>(value.PageSize,
-				value.PageIndex,
-				DataCount,
-				(DataCount % value.PageSize == 0 ? DataCount / value.PageSize : DataCount / value.PageSize + 1),
-				DB.Database.SqlQuery<yy_User>(QuertCMD).ToList());
+				var DataCount = DB.Database.SqlQuery<int>(DataCountCMD).FirstOrDefault();
+				return new ResponseData<yy_User>(value.PageSize,
+					value.PageIndex,
+					DataCount,
+					(DataCount % value.PageSize == 0 ? DataCount / value.PageSize : DataCount / value.PageSize + 1),
+					DB.Database.SqlQuery<yy_User>(QuertCMD).ToList());
 
-			#endregion 执行查询并返回数据
+				#endregion 执行查询并返回数据
+				// return Ok(results);
+			}
+			catch (Exception ex)
+			{
+				//this.log.Error(ex);
+				//return this.BadRequest(ex.Message);
+				throw new Exception(ex.Message);
+			}
 		}
 
 		#endregion 用户列表
@@ -316,7 +328,7 @@ namespace yycms.admin.API
 			newcookie.Values["password"] = Password;
 			newcookie.Expires = DateTime.Now.AddDays(1);
 			HttpContext.Current.Response.Cookies.Add(newcookie);
-		
+
 			return ResponseMessage(new { Code = 0, Error = "" }, UserCookie);
 		}
 

@@ -26,7 +26,22 @@
 
 <div class="bs-callout bs-callout-success">
 	<h3>
-		<span class="label label-success" style="font-size:14px;">@description.HttpMethod.Method</span>
+		@if (description.HttpMethod.Method == "GET")
+			{
+			<span class="label label-success" style="font-size:14px;">@description.HttpMethod.Method</span>
+			}
+		@if (description.HttpMethod.Method == "POST")
+			{
+			<span class="label label-info" style="font-size:14px;">@description.HttpMethod.Method</span>
+			}
+		@if (description.HttpMethod.Method == "PUT")
+			{
+			<span class="label label-info" style="font-size:14px;">@description.HttpMethod.Method</span>
+			}
+		@if (description.HttpMethod.Method == "DELETE")
+			{
+			<span class="label label-danger" style="font-size:14px;">@description.HttpMethod.Method</span>
+			}
 		<span style="font-size:18px;">
 			@description.RelativePath
 			&nbsp;(@description.Documentation)
@@ -46,14 +61,14 @@
 				</h4>
 			</div>
 			<div id="ParametersBD" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Parameters">
-				<div class="panel-body">				
+				<div class="panel-body">
 					@Html.DisplayFor(m => m.UriParameters, "Parameters")
-					@Html.TextArea("jsonRequestValue", null, new { @class = "form-control", @rows = 10, id= "requestTextarea" })
+					@Html.TextArea("jsonRequestValue", null, new { @class = "form-control", @rows = 10, id = "requestTextarea" })
 					<input type="submit" value="Send" class="btn btn-info" />
 					<input id="copyRequest" type="button" value="Copy Request" class="btn btn-info" />
 					<input id="copyResponse" type="button" value="Copy Response" class="btn btn-info" />
-					<input type="reset" value="Reset" class="btn btn-info" />					
-					@Html.TextAreaFor(m => m.ResponseMessage, new { @class = "form-control", @rows = 10 ,id= "responseTextarea" })
+					<input type="reset" value="Reset" class="btn btn-info" />
+					@Html.TextAreaFor(m => m.ResponseMessage, new { @class = "form-control", @rows = 10, id = "responseTextarea" })
 				</div>
 				<div class="col-md-offset-2 col-md-10">
 
