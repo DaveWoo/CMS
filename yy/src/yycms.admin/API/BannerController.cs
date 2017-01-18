@@ -28,6 +28,7 @@ namespace yycms.admin.API
 			Type Table = typeof(yy_Banner);
 
 			var FormData = await Request.Content.ReadAsAsync<Dictionary<String, String>>();
+			//var FormData = await Request.Content.ReadAsAsync<Dictionary<String, String>>().ConfigureAwait(false);
 
 			#region where condition
 

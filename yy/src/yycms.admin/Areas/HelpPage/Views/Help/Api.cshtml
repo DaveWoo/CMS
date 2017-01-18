@@ -15,8 +15,11 @@
 					<li class="active">API Usage</li>
 					<a href="" ng-click="IHelp()" style="float:right"><i class="icon_question_alt2"></i>  帮助</a>
 				</ol>
-				@*<loading></loading>*@
-				@Html.DisplayForModel()
+				<loading></loading>
+				<div>
+					@Html.DisplayForModel()
+					<span ng-bind="$eval(loading = false)"></span>
+				</div>
 				<div class="col-md-12">
 					<div class="form-group">
 						<div class="col-md-12 BtmLayer" id="BtmLayer">
@@ -30,52 +33,3 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript">
-	angular.module("app").controller("APICtrl", function ($location, $scope) {
-		$scope.loading = true;
-
-		$scope.IHelp = function () {
-			var intro = introJs();
-			intro.setOptions({
-				nextLabel: '下一步 <i class="arrow_carrot-right"></i>',
-				prevLabel: ' <i class="arrow_carrot-left"></i> 上一步',
-				skipLabel: '关闭',
-				doneLabel: '关闭',
-				showProgress: false,
-				overlayOpacity: 0.4,
-				steps: [
-                  {
-                  	intro: '<h3>API</h3><p>这里是具体API的入口',
-                  },
-                  {
-                  	position: "bottom",
-                  	element: '.panel-heading',
-                  	intro: "<p>请求数据区域</p>"
-                  },
-				  {
-				  	position: "bottom",
-				  	element: '.table',
-				  	intro: "<p>请求的参数列表</p>"
-				  },
-				  {
-				  	position: "bottom",
-				  	element: '#requestTextarea',
-				  	intro: "<p>请求的Request数据</p>"
-				  },
-				  {
-				  	position: "bottom",
-				  	element: '#responseTextarea',
-				  	intro: "<p>请求的Response数据</p>"
-				  },
-				   {
-				   	position: "bottom",
-				   	element: '.btn',
-				   	intro: "<p>开始请求数据</p>"
-				   },
-				]
-			});
-			intro.start();
-		};
-	});
-</script>
-

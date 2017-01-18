@@ -1,4 +1,4 @@
-@using System.Web.Http.Description
+﻿@using System.Web.Http.Description
 @using yycms.admin.Areas.HelpPage.Models
 
 @model HelpPageApiModel
@@ -11,12 +11,12 @@
 	}
 
 	.panel-title {
-		/*font-family: ΢���ź�;*/
+		/*font-family: Î¢ÈíÑÅºÚ;*/
 	}
 
 	.table > thead:first-child > tr:first-child > th {
 		font-weight: normal;
-		/*font-family: ΢���ź�;*/
+		/*font-family: Î¢ÈíÑÅºÚ;*/
 	}
 
 	.table > thead > tr > th {
@@ -48,151 +48,155 @@
 		</span>
 	</h3>
 </div>
-@using (Html.BeginForm())
+
+<div class="panel-group" id="Parameters" role="tablist" aria-multiselectable="true">
+	<div class="panel panel-default">
+		<div class="panel-heading" role="tab" id="ParametersHD">
+			<h4 class="panel-title">
+				<a role="button" data-toggle="collapse" data-parent="#Parameters" href="#ParametersBD" aria-expanded="false" aria-controls="ParametersBD">
+					Uri Parameters
+					<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
+				</a>
+			</h4>
+		</div>
+		<div id="ParametersBD" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Parameters">
+			<div class="panel-body">
+				@Html.DisplayFor(m => m.UriParameters, "Parameters")
+				@Html.TextArea("jsonRequestValue", null, new { @class = "form-control", @rows = 10, id = "requestTextarea" })
+				<br />
+				<div class="alert alert-warning">
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<input type="submit" value="Send" class="btn btn-info" ng-click="GetDetail()" />
+					<input id="copyRequest" type="button" value="Copy Request" class="btn btn-info" />
+					<input id="copyResponse" type="button" value="Copy Response" class="btn btn-info" />
+					<input type="reset" value="Reset" class="btn btn-info" />
+				</div>
+				@Html.TextAreaFor(m => m.ResponseMessage, new { @class = "form-control", @rows = 10, id = "responseTextarea" })
+			</div>
+			<div class="col-md-offset-2 col-md-10">
+
+			</div>
+		</div>
+	</div>
+</div>
+@if (Model.SampleRequests.Count > 0)
 {
-	<div class="panel-group" id="Parameters" role="tablist" aria-multiselectable="true">
+	<div class="panel-group" id="Samples" role="tablist" aria-multiselectable="true">
 		<div class="panel panel-default">
-			<div class="panel-heading" role="tab" id="ParametersHD">
+			<div class="panel-heading" role="tab" id="SamplesHD">
 				<h4 class="panel-title">
-					<a role="button" data-toggle="collapse" data-parent="#Parameters" href="#ParametersBD" aria-expanded="false" aria-controls="ParametersBD">
-						Uri Parameters
+					<a role="button" data-toggle="collapse" data-parent="#SamplesHD" href="#SamplesBD" aria-expanded="false" aria-controls="SamplesBD">
+						Sample Requests
 						<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
 					</a>
 				</h4>
 			</div>
-			<div id="ParametersBD" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Parameters">
+			<div id="SamplesBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="Samples">
 				<div class="panel-body">
-					@Html.DisplayFor(m => m.UriParameters, "Parameters")
-					@Html.TextArea("jsonRequestValue", null, new { @class = "form-control", @rows = 10, id = "requestTextarea" })
-					<input type="submit" value="Send" class="btn btn-info" />
-					<input id="copyRequest" type="button" value="Copy Request" class="btn btn-info" />
-					<input id="copyResponse" type="button" value="Copy Response" class="btn btn-info" />
-					<input type="reset" value="Reset" class="btn btn-info" />
-					@Html.TextAreaFor(m => m.ResponseMessage, new { @class = "form-control", @rows = 10, id = "responseTextarea" })
-				</div>
-				<div class="col-md-offset-2 col-md-10">
-
-				</div>
-			</div>
-		</div>
-	</div>
-	if (Model.SampleRequests.Count > 0)
-	{
-		<div class="panel-group" id="Samples" role="tablist" aria-multiselectable="true">
-			<div class="panel panel-default">
-				<div class="panel-heading" role="tab" id="SamplesHD">
-					<h4 class="panel-title">
-						<a role="button" data-toggle="collapse" data-parent="#SamplesHD" href="#SamplesBD" aria-expanded="false" aria-controls="SamplesBD">
-							Sample Requests
-							<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
-						</a>
-					</h4>
-				</div>
-				<div id="SamplesBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="Samples">
-					<div class="panel-body">
-						@if (Model.SampleRequests.Count > 0)
-						{
-							@Html.DisplayFor(m => m.SampleRequests, "Samples")
-						}
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="panel-group" id="BizParameters" role="tablist" aria-multiselectable="true">
-			<div class="panel panel-default">
-				<div class="panel-heading" role="tab" id="BizParametersHD">
-					<h4 class="panel-title">
-						<a role="button" data-toggle="collapse" data-parent="#BizParametersHD" href="#BizParametersBD" aria-expanded="false" aria-controls="BizParametersBD">
-							Request	Model Type
-							<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
-						</a>
-						<span>@Html.DisplayFor(m => m.RequestModelDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.RequestModelDescription })</span>
-					</h4>
-				</div>
-				<div id="BizParametersBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="BizParameters">
-					<div class="panel-body">
-						@if (!String.IsNullOrEmpty(Model.RequestDocumentation))
-						{
-							<div class="alert alert-warning">@Model.RequestDocumentation</div>
-						}
-						@if (Model.RequestModelDescription != null)
-						{
-							if (Model.RequestBodyParameters != null)
-							{
-								@Html.DisplayFor(m => m.RequestBodyParameters, "Parameters")
-							}
-						}
-						else
-						{
-							<p>Biz Parameters BD</p>
-						}
-					</div>
-				</div>
-			</div>
-		</div>
-	}
-
-	<div class="panel-group" id="Samples2" role="tablist" aria-multiselectable="true">
-		<div class="panel panel-default">
-			<div class="panel-heading" role="tab" id="Samples2HD">
-				<h4 class="panel-title">
-					<a role="button" data-toggle="collapse" data-parent="#Samples2HD" href="#Samples2BD" aria-expanded="false" aria-controls="Samples2BD">
-						Sample Responses<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
-					</a>
-				</h4>
-			</div>
-			<div id="Samples2BD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="Samples2">
-				<div class="panel-body">
-					@if (Model.SampleResponses.Count > 0)
-				{
-						@Html.DisplayFor(m => m.SampleResponses, "Samples")
-				}
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="panel-group" id="ModelDescriptionLink" role="tablist" aria-multiselectable="true">
-		<div class="panel panel-default">
-			<div class="panel-heading" role="tab" id="ModelDescriptionLinkHD">
-				<h4 class="panel-title">
-					<a role="button" data-toggle="collapse" data-parent="#ModelDescriptionLinkHD" href="#ModelDescriptionLinkBD" aria-expanded="false" aria-controls="ModelDescriptionLinkBD">
-						Responses Entity Description<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
-					</a>
-					<span>
-						@if (Model.ResourceDescription != null)
-						{
-							@Html.DisplayFor(m => m.ResourceDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.ResourceDescription })
-						}
-					</span>
-				</h4>
-			</div>
-			<div id="ModelDescriptionLinkBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="ModelDescriptionLink">
-				<div class="panel-body">
-					@if (!String.IsNullOrEmpty(description.ResponseDescription.Documentation))
-				{
-						<div class="alert alert-warning">
-							@description.ResponseDescription.Documentation
-						</div>
-				}
-					@if (Model.ResourceDescription != null)
-				{
-
-					if (Model.ResourceProperties != null)
+					@if (Model.SampleRequests.Count > 0)
 					{
-							@Html.DisplayFor(m => m.ResourceProperties, "Parameters")
+						@Html.DisplayFor(m => m.SampleRequests, "Samples")
 					}
-				}
-				else
-				{
-						<p>Model Description Link</p>
-				}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel-group" id="BizParameters" role="tablist" aria-multiselectable="true">
+		<div class="panel panel-default">
+			<div class="panel-heading" role="tab" id="BizParametersHD">
+				<h4 class="panel-title">
+					<a role="button" data-toggle="collapse" data-parent="#BizParametersHD" href="#BizParametersBD" aria-expanded="false" aria-controls="BizParametersBD">
+						Request	Model Type
+						<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
+					</a>
+					<span>@Html.DisplayFor(m => m.RequestModelDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.RequestModelDescription })</span>
+				</h4>
+			</div>
+			<div id="BizParametersBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="BizParameters">
+				<div class="panel-body">
+					@if (!String.IsNullOrEmpty(Model.RequestDocumentation))
+					{
+						<div class="alert alert-warning">@Model.RequestDocumentation</div>
+					}
+					@if (Model.RequestModelDescription != null)
+					{
+						if (Model.RequestBodyParameters != null)
+						{
+							@Html.DisplayFor(m => m.RequestBodyParameters, "Parameters")
+						}
+					}
+					else
+					{
+						<p>Biz Parameters BD</p>
+					}
 				</div>
 			</div>
 		</div>
 	</div>
 }
+
+<div class="panel-group" id="Samples2" role="tablist" aria-multiselectable="true">
+	<div class="panel panel-default">
+		<div class="panel-heading" role="tab" id="Samples2HD">
+			<h4 class="panel-title">
+				<a role="button" data-toggle="collapse" data-parent="#Samples2HD" href="#Samples2BD" aria-expanded="false" aria-controls="Samples2BD">
+					Sample Responses<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
+				</a>
+			</h4>
+		</div>
+		<div id="Samples2BD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="Samples2">
+			<div class="panel-body">
+				@if (Model.SampleResponses.Count > 0)
+				{
+					@Html.DisplayFor(m => m.SampleResponses, "Samples")
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="panel-group" id="ModelDescriptionLink" role="tablist" aria-multiselectable="true">
+	<div class="panel panel-default">
+		<div class="panel-heading" role="tab" id="ModelDescriptionLinkHD">
+			<h4 class="panel-title">
+				<a role="button" data-toggle="collapse" data-parent="#ModelDescriptionLinkHD" href="#ModelDescriptionLinkBD" aria-expanded="false" aria-controls="ModelDescriptionLinkBD">
+					Responses Entity Description<i class="indicator glyphicon glyphicon-chevron-down  pull-right"></i>
+				</a>
+				<span>
+					@if (Model.ResourceDescription != null)
+					{
+						@Html.DisplayFor(m => m.ResourceDescription.ModelType, "ModelDescriptionLink", new { modelDescription = Model.ResourceDescription })
+					}
+				</span>
+			</h4>
+		</div>
+		<div id="ModelDescriptionLinkBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="ModelDescriptionLink">
+			<div class="panel-body">
+				@if (!String.IsNullOrEmpty(description.ResponseDescription.Documentation))
+				{
+					<div class="alert alert-warning">
+						@description.ResponseDescription.Documentation
+					</div>
+				}
+				@if (Model.ResourceDescription != null)
+				{
+
+					if (Model.ResourceProperties != null)
+					{
+						@Html.DisplayFor(m => m.ResourceProperties, "Parameters")
+					}
+				}
+				else
+				{
+					<p>Model Description Link</p>
+				}
+			</div>
+		</div>
+	</div>
+</div>
 
 <script type="text/javascript">
 	function toggleChevron(e) {
@@ -223,5 +227,64 @@
 	$("#copyResponse").click(function () {
 		$("#responseTextarea").select();
 		document.execCommand('copy');
+	});
+</script>
+
+<script type="text/javascript">
+	angular.module("app").controller("APICtrl", function ($location, $scope, API_Banner) {
+		$scope.loading = true;
+
+		$scope.GetDetail = function () {
+			var id = $("textarea#requestTextarea").val();
+			API_Banner.Detail(id).then(function (data) {
+				var obj = JSON.stringify(data, null, "\t");
+				$("textarea#responseTextarea").text(obj);
+				$("textarea#requestTextarea").text("")
+				toastr.info('好样的！成功！');
+			});
+		}
+
+		$scope.IHelp = function () {
+			var intro = introJs();
+			intro.setOptions({
+				nextLabel: '下一步 <i class="arrow_carrot-right"></i>',
+				prevLabel: ' <i class="arrow_carrot-left"></i> 上一步',
+				skipLabel: '关闭',
+				doneLabel: '关闭',
+				showProgress: false,
+				overlayOpacity: 0.4,
+				steps: [
+                  {
+                  	intro: '<h3>API</h3><p>这里是具体API的入口',
+                  },
+                  {
+                  	position: "bottom",
+                  	element: '.panel-heading',
+                  	intro: "<p>请求数据区域</p>"
+                  },
+				  {
+				  	position: "bottom",
+				  	element: '.table',
+				  	intro: "<p>请求的参数列表</p>"
+				  },
+				  {
+				  	position: "bottom",
+				  	element: '#requestTextarea',
+				  	intro: "<p>请求的Request数据</p>"
+				  },
+				  {
+				  	position: "bottom",
+				  	element: '#responseTextarea',
+				  	intro: "<p>请求的Response数据</p>"
+				  },
+				   {
+				   	position: "bottom",
+				   	element: '.btn',
+				   	intro: "<p>开始请求数据</p>"
+				   },
+				]
+			});
+			intro.start();
+		};
 	});
 </script>
