@@ -68,7 +68,7 @@
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<input type="submit" value="Send" class="btn btn-info" ng-click="GetDetail()" />
+					<input type="submit" value="Send" class="btn btn-info" ng-click="Go()" />
 					<input id="copyRequest" type="button" value="Copy Request" class="btn btn-info" />
 					<input id="copyResponse" type="button" value="Copy Response" class="btn btn-info" />
 					<input type="reset" value="Reset" class="btn btn-info" />
@@ -231,12 +231,26 @@
 </script>
 
 <script type="text/javascript">
-	angular.module("app").controller("APICtrl", function ($location, $scope, API_Banner) {
+	angular.module("app").controller("APICtrl", function ($location, $scope, API) {
+		@{
+			string relativePath = Model.ApiDescription.RelativePath;
+			string path = string.Format("{0}://{1}/{2}", Request.Url.Scheme, Request.Url.Authority, relativePath);
+		}
 		$scope.loading = true;
-
-		$scope.GetDetail = function () {
-			var id = $("textarea#requestTextarea").val();
-			API_Banner.Detail(id).then(function (data) {
+		$scope.url = "@path";
+		$scope.parameter = '';
+		$scope.method = "@description.HttpMethod.Method";
+		$scope.Go = function () {
+			$scope.data = $("textarea#requestTextarea").val();
+			var serverUrl = '';
+			if (_.includes($scope.url, "{id}")) {
+				serverUrl = _.replace($scope.url, "{id}", '');
+				$scope.parameter = $scope.data;
+			}
+			else {
+				serverUrl = $scope.url;
+			}
+			API.Go(serverUrl, $scope.parameter, $scope.method, $scope.data).then(function (data) {
 				var obj = JSON.stringify(data, null, "\t");
 				$("textarea#responseTextarea").text(obj);
 				$("textarea#requestTextarea").text("")

@@ -391,6 +391,10 @@
     <Content Include="Scripts\jquery.jqprint-0.3.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
+    <Content Include="Scripts\lodash.core.js" />
+    <Content Include="Scripts\lodash.core.min.js" />
+    <Content Include="Scripts\lodash.js" />
+    <Content Include="Scripts\lodash.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\photobooth_min.js" />
     <Content Include="Scripts\plupload\Moxie.swf" />
@@ -1126,6 +1130,9 @@
     <Content Include="Views\Page\Edit.cshtml" />
     <Content Include="Views\Page\Build.cshtml" />
     <Content Include="Views\Page\Progress.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

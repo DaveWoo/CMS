@@ -29,6 +29,7 @@ namespace yycms.admin
 						"~/Scripts/jquery.cookie.js",
 						"~/Scripts/app.js",
 						"~/Scripts/api.js",
+						"~/Scripts/lodash.js",
 						"~/Scripts/intro.min.js"));
 
 			bundles.Add(new StyleBundle("~/bundles/css").Include(

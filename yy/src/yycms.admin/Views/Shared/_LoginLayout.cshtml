@@ -8,8 +8,6 @@
     <meta name="viewport" content="width=device-width" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <title>@ViewBag.Title</title>
-    @Styles.Render("~/bundles/css")
-    @Scripts.Render("~/bundles/js")
     <script type="text/javascript">
         angular.module("app").controller("GlobalCtrl", function ($location, $scope, API_User) {
             $scope.LoginIn = function () {
