@@ -79,6 +79,9 @@ namespace yycms.admin.API
 
 		#region request
 
+		/// <summary>
+		/// Request
+		/// </summary>
 		private HttpRequestBase _request;
 
 		protected HttpRequestBase request
