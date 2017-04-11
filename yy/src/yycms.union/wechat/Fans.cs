@@ -9,6 +9,7 @@ namespace yycms.union.wechat
 		public Fans(String _Accecc_Token)
 		{
 			base.Access_Token = _Accecc_Token;
+
 		}
 
 		#region 查询粉丝
